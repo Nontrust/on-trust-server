@@ -1,22 +1,21 @@
 package com.ontrustserver.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.Post;
 import com.ontrustserver.repository.PostRepository;
-import org.junit.jupiter.api.Assertions;
+import com.ontrustserver.request.PostCreate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,9 +27,10 @@ class PostControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void cleanRepository() {
@@ -38,13 +38,18 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("포스트")
+    @DisplayName("Post 테스트")
     void test() throws Exception {
+        //given
+
+        PostCreate request = PostCreate.builder().title("test title").contents("test contents").build();
+        String json = objectMapper.writeValueAsString(request);
+
         // expected
         mockMvc
-                .perform(post("/post")
+                .perform(post("/post", request)
                         .contentType(APPLICATION_JSON)
-                        .content("{\"title\":\"test title\",\"contents\":\"test contents\"}")
+                        .content(json)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.contents", is("test contents")))
@@ -53,13 +58,16 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("validate 테스트")
+    @DisplayName("Post validate 테스트")
     void validateTest() throws Exception {
+        PostCreate request = PostCreate.builder().title("").contents("").build();
+        String json = objectMapper.writeValueAsString(request);
+
         // expected
         mockMvc
-                .perform(post("/post")
+                .perform(post("/post", request)
                         .contentType(APPLICATION_JSON)
-                        .content("{\"title\":\"\",\"contents\":\"test contents\"}")
+                        .content(json)
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code", is("400")))
@@ -69,24 +77,49 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("Post repository 테스트")
+    @DisplayName("Post 저장 테스트")
     void repositoryTest() throws Exception {
-        // when
+        PostCreate request = PostCreate.builder().title("test title").contents("test contents").build();
+        String json = objectMapper.writeValueAsString(request);
+
+        // expected
         mockMvc
-                .perform(post("/post")
+                .perform(post("/post", request)
                         .contentType(APPLICATION_JSON)
-                        .content("{\"title\":\"test title\",\"contents\":\"test contents\"}")
+                        .content(json)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.contents", is("test contents")))
                 .andExpect(jsonPath("$.title", is("test title")))
                 .andDo(print());
         // then
-        Assertions.assertEquals(postRepository.count(), 1);
+        assertEquals(postRepository.count(), 1);
         Post post = postRepository.findAll().get(0);
 
-        Assertions.assertEquals(post.getTitle(), "test title");
-        Assertions.assertEquals(post.getContents(), "test contents");
-
+        assertEquals(post.getTitle(), "test title");
+        assertEquals(post.getContents(), "test contents");
     }
+
+    @Test
+    @DisplayName("글 1개 조회 test")
+    void getByIdTest() throws Exception {
+        //given
+        Post post = Post.builder()
+                .title("글 1")
+                .contents("컨텐츠 1")
+                .build();
+        postRepository.save(post);
+
+        //expect
+        mockMvc
+                .perform(get("/post/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.title", is("글 1")))
+                .andExpect(jsonPath("$.contents", is("컨텐츠 1")))
+                .andDo(print());
+    }
+
 }
