@@ -1,0 +1,9 @@
+package com.ontrustserver.request;
+
+import jakarta.validation.constraints.NotEmpty;
+
+public record PostCreate(
+        @NotEmpty(message = "title은 필수입니다.") String title,
+        @NotEmpty(message = "contents는 필수입니다.")String contents
+){}
+
