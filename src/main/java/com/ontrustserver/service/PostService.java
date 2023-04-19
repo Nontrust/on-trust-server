@@ -13,12 +13,16 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
     private final PostRepository postRepository;
-    public void post(PostCreate postCreate) {
+    public Post post(PostCreate postCreate) {
         Post post = Post.builder()
                 .title(postCreate.title())
                 .contents(postCreate.contents())
                 .build();
+        return postRepository.save(post);
+    }
 
-        postRepository.save(post);
+    public Post get(Long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
     }
 }
