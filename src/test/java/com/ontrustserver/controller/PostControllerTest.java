@@ -1,9 +1,11 @@
 package com.ontrustserver.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.Post;
 import com.ontrustserver.repository.PostRepository;
 import com.ontrustserver.request.PostCreate;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
+@Slf4j
 @SpringBootTest
 class PostControllerTest {
 
@@ -120,6 +127,32 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.title", is("글 1")))
                 .andExpect(jsonPath("$.contents", is("컨텐츠 1")))
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("글 1개 조회 test")
+    void getListTest() throws Exception {
+        //given
+        List<Post> posts = IntStream.rangeClosed(1, 30)
+                .mapToObj(r ->
+                        Post.builder().title("글" + r).contents("컨텐츠" + r).build()
+                ).toList();
+        postRepository.saveAll(posts);
+
+        //expect
+        MvcResult mvcResult = mockMvc
+                .perform(get("/posts")
+                        .contentType(APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(30)))
+                .andDo(print())
+                .andReturn();
+
+        // then
+        String responseJson = mvcResult.getResponse().getContentAsString();
+        List<Post> postList = objectMapper.readValue(responseJson, new TypeReference<List<Post>>() {});
+        assertEquals(postList.size(), 30);
     }
 
 }
