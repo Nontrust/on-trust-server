@@ -29,9 +29,9 @@ public class PostService {
                 .map(Post::new)
                 .collect(Collectors.toList());
 
-        List<Post> savedList = postRepository.saveAll(postList);
+        postRepository.saveAll(postList);
 
-        return PostResponse.listToResponse(savedList);
+        return PostResponse.listToResponse(postList);
     }
 
     public PostResponse get(Long id) {
