@@ -2,7 +2,7 @@ package com.ontrustserver.service;
 
 import com.ontrustserver.domain.Post;
 import com.ontrustserver.repository.PostRepository;
-import com.ontrustserver.request.PostCreate;
+import com.ontrustserver.request.PostRequest;
 import com.ontrustserver.response.PostResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,27 +17,17 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository  postRepository;
-    public PostResponse post(PostCreate postCreate) {
-        Post post = Post.builder()
-                .title(postCreate.title())
-                .contents(postCreate.contents())
-                .build();
+    public PostResponse post(PostRequest postRequest) {
+        Post post = new Post(postRequest);
         postRepository.save(post);
 
-        return PostResponse.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .contents(post.getContents())
-                .build();
+        return PostResponse.postToResponse(post);
     }
 
-    public List<PostResponse> postList(List<PostCreate> postCreates) {
-        List<Post> postList = postCreates.stream().map(postCreate ->
-            Post.builder()
-                    .title(postCreate.title())
-                    .contents(postCreate.contents())
-                    .build()
-        ).collect(Collectors.toList());
+    public List<PostResponse> postList(List<PostRequest> postRequests) {
+        List<Post> postList = postRequests.stream()
+                .map(Post::new)
+                .collect(Collectors.toList());
 
         List<Post> savedList = postRepository.saveAll(postList);
 
@@ -48,11 +38,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        return PostResponse.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .contents(post.getContents())
-                .build();
+        return PostResponse.postToResponse(post);
     }
 
     public List<PostResponse> getPostList() {

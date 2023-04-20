@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.Post;
 import com.ontrustserver.repository.PostRepository;
-import com.ontrustserver.request.PostCreate;
+import com.ontrustserver.request.PostRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class PostControllerTest {
     void test() throws Exception {
         //given
 
-        PostCreate request = PostCreate.builder().title("test title").contents("test contents").build();
+        PostRequest request = PostRequest.builder().title("test title").contents("test contents").build();
         String json = objectMapper.writeValueAsString(request);
 
         // expected
@@ -67,7 +67,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Post validate 테스트")
     void validateTest() throws Exception {
-        PostCreate request = PostCreate.builder().title("").contents("").build();
+        PostRequest request = PostRequest.builder().title("").contents("").build();
         String json = objectMapper.writeValueAsString(request);
 
         // expected
@@ -86,7 +86,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Post 저장 테스트")
     void repositoryTest() throws Exception {
-        PostCreate request = PostCreate.builder().title("test title").contents("test contents").build();
+        PostRequest request = PostRequest.builder().title("test title").contents("test contents").build();
         String json = objectMapper.writeValueAsString(request);
 
         // expected

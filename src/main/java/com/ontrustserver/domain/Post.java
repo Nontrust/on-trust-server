@@ -1,5 +1,6 @@
 package com.ontrustserver.domain;
 
+import com.ontrustserver.request.PostRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,4 +17,10 @@ public class Post {
     private Long id;
     private String title;
     @Lob
-    private String contents;}
+    private String contents;
+
+    public Post(PostRequest request){
+        this.title = request.title();
+        this.contents = request.contents();
+    }
+}

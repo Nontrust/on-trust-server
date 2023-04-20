@@ -3,7 +3,7 @@ package com.ontrustserver.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.Post;
 import com.ontrustserver.repository.PostRepository;
-import com.ontrustserver.request.PostCreate;
+import com.ontrustserver.request.PostRequest;
 import com.ontrustserver.response.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,9 +36,9 @@ class PostServiceTest {
     @DisplayName("글 작성")
     void setPostService() {
         //given
-        PostCreate postCreate = PostCreate.builder().title("test title").contents("test contents").build();
+        PostRequest postRequest = PostRequest.builder().title("test title").contents("test contents").build();
         //when
-        PostResponse post = postService.post(postCreate);
+        PostResponse post = postService.post(postRequest);
 
         //then
         assertEquals(1, postRepository.count());
