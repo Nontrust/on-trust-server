@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class OnTrustServerApplication {
 
     public static void main(String[] args) {
+        // encoding set : utf-8
+        System.setProperty("file.encoding","UTF-8");
         SpringApplication.run(OnTrustServerApplication.class, args);
     }
 

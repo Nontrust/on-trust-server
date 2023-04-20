@@ -1,0 +1,14 @@
+﻿.git
+
+.gradle
+
+build
+out
+
+.idea
+.code
+
+target
+
+*.log
+*.txt
