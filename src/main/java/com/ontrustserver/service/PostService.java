@@ -31,6 +31,19 @@ public class PostService {
                 .build();
     }
 
+    public List<PostResponse> postList(List<PostCreate> postCreates) {
+        List<Post> postList = postCreates.stream().map(postCreate ->
+            Post.builder()
+                    .title(postCreate.title())
+                    .contents(postCreate.contents())
+                    .build()
+        ).collect(Collectors.toList());
+
+        List<Post> savedList = postRepository.saveAll(postList);
+
+        return PostResponse.listToResponse(savedList);
+    }
+
     public PostResponse get(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
@@ -41,5 +54,9 @@ public class PostService {
                 .contents(post.getContents())
                 .build();
     }
+
+    public List<PostResponse> getPostList() {
+        List<Post> posts = postRepository.findAll();
+        return PostResponse.listToResponse(posts);
     }
 }
