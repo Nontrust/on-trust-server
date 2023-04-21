@@ -6,6 +6,9 @@ import com.ontrustserver.request.PostRequest;
 import com.ontrustserver.response.PostResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,9 +32,9 @@ public class PostService {
                 .map(Post::new)
                 .collect(Collectors.toList());
 
-        postRepository.saveAll(postList);
-
-        return PostResponse.listToResponse(postList);
+        return postRepository.saveAll(postList).stream()
+                .map(PostResponse::postToResponse)
+                .collect(Collectors.toList());
     }
 
     public PostResponse get(Long id) {
@@ -41,8 +44,12 @@ public class PostService {
         return PostResponse.postToResponse(post);
     }
 
-    public List<PostResponse> getPostList() {
-        List<Post> posts = postRepository.findAll();
-        return PostResponse.listToResponse(posts);
+    public List<PostResponse> getPostList(int page, int size, String order) {
+        Sort sort = Sort.by(order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return postRepository.findAll(pageable).stream()
+                .map(PostResponse::postToResponse)
+                .collect(Collectors.toList());
     }
 }

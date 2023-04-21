@@ -25,13 +25,4 @@ public record PostResponse(
                 .contents(post.getContents())
                 .build();
     }
-    public static List<PostResponse> listToResponse(List<Post> posts){
-        return posts.stream().map(post ->
-            PostResponse.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .contents(post.getContents())
-                    .build()
-        ).collect(Collectors.toList());
-    }
 }

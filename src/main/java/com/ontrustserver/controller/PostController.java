@@ -25,8 +25,12 @@ public class PostController {
         return postService.get(id);
     }
 
-    @GetMapping("/posts")
-    public List<PostResponse> getPostList(){
-        return postService.getPostList();
+    @GetMapping("/post")
+    public List<PostResponse> getPostList(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "desc") String order
+    ){
+        return postService.getPostList(page, size, order);
     }
 }
