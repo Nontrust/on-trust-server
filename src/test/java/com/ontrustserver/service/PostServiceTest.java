@@ -60,9 +60,8 @@ class PostServiceTest {
         assertEquals(responsePost.title(), "글 1");
         assertEquals(responsePost.contents(), "컨텐츠 1");
     }
-
     @Test
-    @DisplayName("글 1개 조회")
+    @DisplayName("글 조회")
     void getPostListService() {
         //given
         List<Post> posts = IntStream.rangeClosed(1, 30)
@@ -73,13 +72,13 @@ class PostServiceTest {
                                 .build()
                 )
                 .toList();
-
+        int size = 10;
         postRepository.saveAll(posts);
         //when
-        List<PostResponse> responsePost = postService.getPostList();
+        List<PostResponse> responsePost = postService.getPostList(1, size, "asc");
 
         //then
-        assertEquals(responsePost.size(), 30);
+        assertEquals(responsePost.size(), size);
     }
 
 }

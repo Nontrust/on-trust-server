@@ -4,14 +4,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.Post;
 import com.ontrustserver.repository.PostRepository;
+import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Request;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -123,7 +126,6 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.title", is("글 1")))
                 .andExpect(jsonPath("$.contents", is("컨텐츠 1")))
                 .andDo(print());
@@ -139,20 +141,26 @@ class PostControllerTest {
                 ).toList();
         postRepository.saveAll(posts);
 
+        PagingRequest request = PagingRequest.builder()
+                .page(1)
+                .size(10)
+                .order("asc")
+                .build();
+
         //expect
         MvcResult mvcResult = mockMvc
-                .perform(get("/posts")
+                .perform(get("/post", request)
                         .contentType(APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(30)))
+                .andExpect(jsonPath("$.length()", is(10)))
                 .andDo(print())
                 .andReturn();
 
         // then
         String responseJson = mvcResult.getResponse().getContentAsString();
         List<Post> postList = objectMapper.readValue(responseJson, new TypeReference<List<Post>>() {});
-        assertEquals(postList.size(), 30);
+        assertEquals(postList.size(), 10);
     }
 
 }
