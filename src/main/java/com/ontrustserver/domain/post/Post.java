@@ -1,4 +1,4 @@
-package com.ontrustserver.domain;
+package com.ontrustserver.domain.post;
 
 import com.ontrustserver.request.PostRequest;
 import jakarta.persistence.*;
@@ -12,7 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 public class Post {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // todo Generation Type SEQUENCE로 변경 예정
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private Long id;
     private String title;

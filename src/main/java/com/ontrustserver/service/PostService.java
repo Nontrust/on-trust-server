@@ -1,6 +1,6 @@
 package com.ontrustserver.service;
 
-import com.ontrustserver.domain.Post;
+import com.ontrustserver.domain.post.Post;
 import com.ontrustserver.repository.PostRepository;
 import com.ontrustserver.request.PostRequest;
 import com.ontrustserver.response.PostResponse;

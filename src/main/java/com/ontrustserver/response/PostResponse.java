@@ -1,10 +1,7 @@
 package com.ontrustserver.response;
 
-import com.ontrustserver.domain.Post;
+import com.ontrustserver.domain.post.Post;
 import lombok.Builder;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public record PostResponse(
         Long id,
