@@ -2,6 +2,8 @@
 
 FROM openjdk:17
 
+USER root
+
 # 앱 루트 디렉토리
 WORKDIR /app
 
@@ -18,8 +20,7 @@ RUN chmod +x ./gradlew
 COPY src src
 
 # Gradle 빌드
-#RUN powershell -Command $ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue'; powershell -Command $ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue'; ./gradlew build -x test
-RUN ./gradlew build -x test
+RUN ./gradlew clean build
 
 # Jar 파일 복사
 COPY build/libs/*.jar app.jar
