@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+# Querydsl generated files
+/src/main/generated/
+
 ### STS ###
 .apt_generated
 .classpath
