@@ -1,5 +1,6 @@
 package com.ontrustserver.controller;
 
+import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
 import com.ontrustserver.response.PostResponse;
 import com.ontrustserver.service.PostService;
@@ -26,11 +27,7 @@ public class PostController {
     }
 
     @GetMapping("/post")
-    public List<PostResponse> getPostList(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false, defaultValue = "asc") String order
-    ){
-        return postService.getPostList(page, size, order);
+    public List<PostResponse> getPostList(@Valid PagingRequest request){
+        return postService.getPostList(request);
     }
 }

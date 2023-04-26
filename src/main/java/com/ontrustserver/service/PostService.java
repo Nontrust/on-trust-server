@@ -2,13 +2,11 @@ package com.ontrustserver.service;
 
 import com.ontrustserver.domain.post.Post;
 import com.ontrustserver.repository.PostRepository;
+import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
 import com.ontrustserver.response.PostResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,9 +42,8 @@ public class PostService {
         return PostResponse.postToResponse(post);
     }
 
-    public List<PostResponse> getPostList(int page, int size, String order) {
-
-        return postRepository.getPostList(page, size, order).stream()
+    public List<PostResponse> getPostList(PagingRequest request) {
+        return postRepository.getPostList(request).stream()
                 .map(PostResponse::postToResponse)
                 .collect(Collectors.toList());
     }
