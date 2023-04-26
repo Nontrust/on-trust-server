@@ -9,7 +9,6 @@ version = '0.0.1-SNAPSHOT'
 
 // source target, build target
 sourceCompatibility = '17'
-targetCompatibility = '17'
 
 configurations {
     compileOnly {
