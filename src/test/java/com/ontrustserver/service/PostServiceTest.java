@@ -3,6 +3,7 @@ package com.ontrustserver.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.post.Post;
 import com.ontrustserver.repository.PostRepository;
+import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
 import com.ontrustserver.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,6 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @SpringBootTest
@@ -65,7 +65,7 @@ class PostServiceTest {
         assertEquals(responsePost.contents(), "컨텐츠 1");
     }
     @Test
-    @DisplayName("글 조회")
+    @DisplayName("글 30개 중 10개 조회")
     void getPostListService() {
         //given
         List<Post> posts = IntStream.rangeClosed(1, 30)
@@ -79,8 +79,19 @@ class PostServiceTest {
         int size = 10;
         postRepository.saveAll(posts);
         //when
-        List<PostResponse> responsePostOrderByAsc = postService.getPostList(1, size, "asc");
-        List<PostResponse> responsePostOrderByDesc = postService.getPostList(1, size, "desc");
+        PagingRequest asc = PagingRequest.builder()
+                .page(1)
+                .size(size)
+                .order("asc")
+                .build();
+        PagingRequest desc = PagingRequest.builder()
+                .page(1)
+                .size(size)
+                .order("desc")
+                .build();
+
+        List<PostResponse> responsePostOrderByAsc = postService.getPostList(asc);
+        List<PostResponse> responsePostOrderByDesc = postService.getPostList(desc);
         //then
 
         assertEquals(responsePostOrderByAsc.size(), size);

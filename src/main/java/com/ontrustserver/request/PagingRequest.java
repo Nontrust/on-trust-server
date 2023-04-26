@@ -9,6 +9,11 @@ public record PagingRequest(
         @Min(value = 1L, message = "size는 0보다 작을 수 없습니다") Integer size,
         String order
 ) {
+    /**
+     * @param page set Default 1
+     * @param size set Default 10
+     * @param order set Default asc
+     */
     @Builder
     public PagingRequest(Integer page, Integer size, String order) {
         this.page = page==null ? 1 : page;
