@@ -5,6 +5,7 @@ import com.ontrustserver.domain.post.Post;
 import com.ontrustserver.repository.PostRepository;
 import com.ontrustserver.request.PostRequest;
 import com.ontrustserver.response.PostResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,9 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Slf4j
 @SpringBootTest
 class PostServiceTest {
     @Autowired
@@ -75,10 +79,19 @@ class PostServiceTest {
         int size = 10;
         postRepository.saveAll(posts);
         //when
-        List<PostResponse> responsePost = postService.getPostList(1, size, "asc");
-
+        List<PostResponse> responsePostOrderByAsc = postService.getPostList(1, size, "asc");
+        List<PostResponse> responsePostOrderByDesc = postService.getPostList(1, size, "desc");
         //then
-        assertEquals(responsePost.size(), size);
+
+        assertEquals(responsePostOrderByAsc.size(), size);
+        assertEquals(responsePostOrderByDesc.size(), size);
+
+        assertThat(responsePostOrderByAsc.get(0).id())
+                .isLessThan(responsePostOrderByAsc.get(1).id());
+
+        assertThat(responsePostOrderByDesc.get(0).id())
+                .isGreaterThan(responsePostOrderByDesc.get(1).id());
+
     }
 
 }
