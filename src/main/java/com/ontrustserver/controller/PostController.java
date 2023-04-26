@@ -29,7 +29,7 @@ public class PostController {
     public List<PostResponse> getPostList(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false, defaultValue = "desc") String order
+            @RequestParam(required = false, defaultValue = "asc") String order
     ){
         return postService.getPostList(page, size, order);
     }

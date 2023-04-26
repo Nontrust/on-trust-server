@@ -45,10 +45,8 @@ public class PostService {
     }
 
     public List<PostResponse> getPostList(int page, int size, String order) {
-        Sort sort = Sort.by(order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, "id");
-        Pageable pageable = PageRequest.of(page, size, sort);
 
-        return postRepository.findAll(pageable).stream()
+        return postRepository.getPostList(page, size, order).stream()
                 .map(PostResponse::postToResponse)
                 .collect(Collectors.toList());
     }
