@@ -33,6 +33,12 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .fetch();
     }
 
+    public Post fetchAnyOne(){
+        return jpaQueryFactory.selectFrom(QPost.post)
+                .limit(1)
+                .fetchFirst();
+    }
+
     private static OrderSpecifier<Long> orderById(String order){
         QPost post = QPost.post;
         return order.equalsIgnoreCase("desc")

@@ -75,7 +75,7 @@ class PostServiceTest {
         Post requestPost = Post.builder().title("글 1").contents("컨텐츠 1").build();
         postRepository.save(requestPost);
         //when
-        PostResponse responsePost = postService.get(requestPost.getId());
+        PostResponse responsePost = postService.getById(requestPost.getId());
 
         //then
         assertNotNull(responsePost);
@@ -105,6 +105,24 @@ class PostServiceTest {
         assertThat(responsePostOrderByDesc.get(0).id())
                 .isGreaterThan(responsePostOrderByDesc.get(1).id());
 
+    }
+
+    @Test
+    @DisplayName("글 제목 Update")
+    void updatePostTitle() {
+        // given
+        String updateTitle = "업데이트 된 글 제목";
+        String updateContents = "업데이트 된 타이틀";
+        Post post = postRepository.fetchAnyOne();
+        PostEdit postEdit = PostEdit.builder()
+                .title(updateTitle)
+                .contents(updateContents)
+                .build();
+        // when
+        PostResponse editedPost = postService.updatePostById(post.getId(), postEdit);
+        // then
+        assertEquals(editedPost.title(), updateTitle);
+        assertEquals(editedPost.contents(), updateContents);
     }
 
 }

@@ -49,6 +49,7 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(timeout = 3, rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
     public PostResponse updatePostById(Long id, PostEdit postEdit){
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
