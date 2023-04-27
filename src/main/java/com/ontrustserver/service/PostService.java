@@ -4,6 +4,7 @@ import com.ontrustserver.domain.post.Post;
 import com.ontrustserver.repository.PostRepository;
 import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
+import com.ontrustserver.response.PostEdit;
 import com.ontrustserver.response.PostResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
-    public PostResponse get(Long id) {
+    public PostResponse getById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
@@ -46,5 +47,14 @@ public class PostService {
         return postRepository.getPostList(pagingRequest).stream()
                 .map(PostResponse::postToResponse)
                 .collect(Collectors.toList());
+    }
+
+    public PostResponse updatePostById(Long id, PostEdit postEdit){
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+        post.setTitle(postEdit.title());
+        post.setContents(postEdit.contents());
+
+        return PostResponse.postToResponse(post);
     }
 }

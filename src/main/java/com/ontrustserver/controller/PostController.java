@@ -2,6 +2,7 @@ package com.ontrustserver.controller;
 
 import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
+import com.ontrustserver.response.PostEdit;
 import com.ontrustserver.response.PostResponse;
 import com.ontrustserver.service.PostService;
 import jakarta.validation.Valid;
@@ -23,11 +24,15 @@ public class PostController {
     }
     @GetMapping("/post/{postId}")
     public PostResponse getPost(@PathVariable(name = "postId") Long id){
-        return postService.get(id);
+        return postService.getById(id);
     }
 
     @GetMapping("/post")
     public List<PostResponse> getPostList(@Valid PagingRequest pagingRequest){
         return postService.getPostList(pagingRequest);
+    }
+    @PutMapping("/post/{postId}")
+    public PostResponse updatePost(@PathVariable(name = "postId") Long id, PostEdit postEdit) {
+        return postService.updatePostById(id, postEdit);
     }
 }
