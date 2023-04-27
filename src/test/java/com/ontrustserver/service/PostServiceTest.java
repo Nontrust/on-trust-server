@@ -5,13 +5,16 @@ import com.ontrustserver.domain.post.Post;
 import com.ontrustserver.repository.PostRepository;
 import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
+import com.ontrustserver.response.PostEdit;
 import com.ontrustserver.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -24,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 class PostServiceTest {
     @Autowired
+    ApplicationContext context;
+    @Autowired
     PostService postService;
     @Autowired
     PostRepository postRepository;
@@ -32,6 +37,17 @@ class PostServiceTest {
 
 
     @BeforeEach
+    void setPost(){
+        // given
+        List<Post> posts = IntStream.rangeClosed(1, 30)
+                .mapToObj(r ->Post.builder()
+                                .title("글" + r)
+                                .contents("컨텐츠" + r)
+                                .build()
+                ).toList();
+        postRepository.saveAll(posts);
+    }
+    @AfterEach
     void deleteAll() {
         postRepository.deleteAll();
     }
@@ -42,10 +58,12 @@ class PostServiceTest {
         //given
         PostRequest postRequest = PostRequest.builder().title("test title").contents("test contents").build();
         //when
+        long beforeCount = postRepository.count();
         PostResponse post = postService.post(postRequest);
+        long afterCount = postRepository.count();
 
         //then
-        assertEquals(1, postRepository.count());
+        assertEquals(1, afterCount - beforeCount );
         assertEquals(post.title(), "test title");
         assertEquals(post.contents(), "test contents");
     }
@@ -67,28 +85,12 @@ class PostServiceTest {
     @Test
     @DisplayName("글 30개 중 10개 조회")
     void getPostListService() {
-        //given
-        List<Post> posts = IntStream.rangeClosed(1, 30)
-                .mapToObj(r ->
-                        Post.builder()
-                                .title("글" + r)
-                                .contents("컨텐츠" + r)
-                                .build()
-                )
-                .toList();
         int size = 10;
-        postRepository.saveAll(posts);
         //when
-        PagingRequest asc = PagingRequest.builder()
-                .page(1)
-                .size(size)
-                .order("asc")
-                .build();
-        PagingRequest desc = PagingRequest.builder()
-                .page(1)
-                .size(size)
-                .order("desc")
-                .build();
+        PagingRequest asc = PagingRequest.builder().page(1).size(size)
+                .order("asc").build();
+        PagingRequest desc = PagingRequest.builder().page(1).size(size)
+                .order("desc").build();
 
         List<PostResponse> responsePostOrderByAsc = postService.getPostList(asc);
         List<PostResponse> responsePostOrderByDesc = postService.getPostList(desc);

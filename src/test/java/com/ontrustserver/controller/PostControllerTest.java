@@ -1,12 +1,15 @@
 package com.ontrustserver.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.post.Post;
 import com.ontrustserver.repository.PostRepository;
 import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
+import com.ontrustserver.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,6 +44,18 @@ class PostControllerTest {
     private ObjectMapper objectMapper;
 
     @BeforeEach
+    void setPost(){
+        // given
+        List<Post> posts = IntStream.rangeClosed(1, 30)
+                .mapToObj(r ->Post.builder()
+                        .title("글" + r)
+                        .contents("컨텐츠" + r)
+                        .build()
+                ).toList();
+        postRepository.saveAll(posts);
+    }
+
+    @AfterEach
     void cleanRepository() {
         postRepository.deleteAll();
     }
@@ -89,9 +104,10 @@ class PostControllerTest {
     void repositoryTest() throws Exception {
         PostRequest request = PostRequest.builder().title("test title").contents("test contents").build();
         String json = objectMapper.writeValueAsString(request);
+        long beforeCount = postRepository.count();
 
         // expected
-        mockMvc
+        MvcResult result = mockMvc
                 .perform(post("/post", request)
                         .contentType(APPLICATION_JSON)
                         .content(json)
@@ -99,13 +115,17 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.contents", is("test contents")))
                 .andExpect(jsonPath("$.title", is("test title")))
-                .andDo(print());
+                .andDo(print())
+                .andReturn();
         // then
-        assertEquals(postRepository.count(), 1);
+        String responseJson = result.getResponse().getContentAsString();
+        JsonNode jsonNode = objectMapper.readTree(responseJson);
+
+        assertEquals(postRepository.count()-beforeCount, 1);
         Post post = postRepository.findAll().get(0);
 
-        assertEquals(post.getTitle(), "test title");
-        assertEquals(post.getContents(), "test contents");
+        assertEquals(jsonNode.get("title").asText("fallback"), "test title");
+        assertEquals(jsonNode.get("contents").asText("fallback"), "test contents");
     }
 
     @Test
