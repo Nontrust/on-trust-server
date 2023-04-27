@@ -20,4 +20,8 @@ public record PagingRequest(
         this.size = size==null ? 10 : size;
         this.order = order==null ? "asc" : order;
     }
+
+    public Integer offSet(){
+        return (this.page - 1) * this.size();
+    }
 }

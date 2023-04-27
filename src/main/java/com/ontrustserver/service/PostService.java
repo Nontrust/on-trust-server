@@ -42,8 +42,8 @@ public class PostService {
         return PostResponse.postToResponse(post);
     }
 
-    public List<PostResponse> getPostList(PagingRequest request) {
-        return postRepository.getPostList(request).stream()
+    public List<PostResponse> getPostList(PagingRequest pagingRequest) {
+        return postRepository.getPostList(pagingRequest).stream()
                 .map(PostResponse::postToResponse)
                 .collect(Collectors.toList());
     }

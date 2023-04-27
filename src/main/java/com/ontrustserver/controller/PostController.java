@@ -27,7 +27,7 @@ public class PostController {
     }
 
     @GetMapping("/post")
-    public List<PostResponse> getPostList(@Valid PagingRequest request){
-        return postService.getPostList(request);
+    public List<PostResponse> getPostList(@Valid PagingRequest pagingRequest){
+        return postService.getPostList(pagingRequest);
     }
 }

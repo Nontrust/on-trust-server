@@ -25,11 +25,11 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
     }
 
     @Override
-    public List<Post> getPostList(PagingRequest request) {
+    public List<Post> getPostList(PagingRequest pagingRequest) {
         return jpaQueryFactory.selectFrom(QPost.post)
-                .limit(request.size())
-                .offset((request.page() - 1L) * request.size())
-                .orderBy(orderById(request.order()))
+                .limit(pagingRequest.size())
+                .offset(pagingRequest.offSet())
+                .orderBy(orderById(pagingRequest.order()))
                 .fetch();
     }
 
