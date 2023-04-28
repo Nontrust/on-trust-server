@@ -47,7 +47,7 @@ class PostServiceTest {
                 ).toList();
         postRepository.saveAll(posts);
     }
-    @AfterEach
+//    @AfterEach
     void deleteAll() {
         postRepository.deleteAll();
     }
@@ -108,12 +108,13 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("글 제목 Update")
-    void updatePostTitle() {
+    @DisplayName("글, 제목 Update")
+    void updatePost() {
         // given
         String updateTitle = "업데이트 된 글 제목";
-        String updateContents = "업데이트 된 타이틀";
+        String updateContents = "업데이트 된 컨텐츠";
         Post post = postRepository.fetchAnyOne();
+
         PostEdit postEdit = PostEdit.builder()
                 .title(updateTitle)
                 .contents(updateContents)
@@ -123,6 +124,44 @@ class PostServiceTest {
         // then
         assertEquals(editedPost.title(), updateTitle);
         assertEquals(editedPost.contents(), updateContents);
+
+    }
+    @Test
+    @DisplayName("제목만 Update")
+    void updatePostTitle() {
+        // given
+        String updateTitle = "업데이트 된 글 제목";
+        Post post = postRepository.fetchAnyOne();
+
+        PostEdit postEditOnlyTitle = PostEdit.builder()
+                .title(updateTitle)
+//                .contents(updateContents)
+                .build();
+
+        // when
+        PostResponse editedPostTitle = postService.updatePostById(post.getId(), postEditOnlyTitle);
+        // then
+        assertEquals(editedPostTitle.title(), updateTitle);
+        assertEquals(editedPostTitle.contents(), post.getContents());
+
+    }  @Test
+    @DisplayName("컨텐츠만 Update")
+    void updatePostContents() {
+        // given
+        String updateContents = "업데이트 된 컨텐츠";
+        Post post = postRepository.fetchAnyOne();
+
+        PostEdit postEditOnlyContents = PostEdit.builder()
+//                .title(updateTitle)
+                .contents(updateContents)
+                .build();
+
+        // when
+        PostResponse editedPostContents = postService.updatePostById(post.getId(), postEditOnlyContents);
+        // then
+        assertEquals(editedPostContents.title(), post.getTitle());
+        assertEquals(editedPostContents.contents(), updateContents);
+
     }
 
 }
