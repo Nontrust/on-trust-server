@@ -1,4 +1,4 @@
-package com.ontrustserver.domain.post;
+package com.ontrustserver.domain.model;
 
 import lombok.Builder;
 

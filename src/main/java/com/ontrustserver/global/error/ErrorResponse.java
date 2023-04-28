@@ -1,4 +1,4 @@
-package com.ontrustserver.response;
+package com.ontrustserver.global.error;
 
 import lombok.Builder;
 

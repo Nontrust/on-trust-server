@@ -1,6 +1,6 @@
-package com.ontrustserver.response;
+package com.ontrustserver.domain.post.dto.response;
 
-import com.ontrustserver.domain.post.Post;
+import com.ontrustserver.domain.model.Post;
 import lombok.Builder;
 
 public record PostResponse(

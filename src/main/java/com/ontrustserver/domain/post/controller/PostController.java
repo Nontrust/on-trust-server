@@ -1,10 +1,10 @@
-package com.ontrustserver.controller;
+package com.ontrustserver.domain.post.controller;
 
-import com.ontrustserver.request.PagingRequest;
-import com.ontrustserver.request.PostRequest;
-import com.ontrustserver.response.PostEdit;
-import com.ontrustserver.response.PostResponse;
-import com.ontrustserver.service.PostService;
+import com.ontrustserver.global.common.request.PagingRequest;
+import com.ontrustserver.domain.post.dto.request.PostRequest;
+import com.ontrustserver.domain.post.dto.response.PostEdit;
+import com.ontrustserver.domain.post.dto.response.PostResponse;
+import com.ontrustserver.domain.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

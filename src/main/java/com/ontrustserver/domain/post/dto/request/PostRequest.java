@@ -1,4 +1,4 @@
-package com.ontrustserver.request;
+package com.ontrustserver.domain.post.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;

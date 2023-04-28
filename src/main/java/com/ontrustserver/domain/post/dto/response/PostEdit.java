@@ -1,4 +1,4 @@
-package com.ontrustserver.response;
+package com.ontrustserver.domain.post.dto.response;
 
 import lombok.Builder;
 

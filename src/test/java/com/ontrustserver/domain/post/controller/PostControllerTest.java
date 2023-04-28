@@ -1,14 +1,14 @@
-package com.ontrustserver.controller;
+package com.ontrustserver.domain.post.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ontrustserver.domain.post.Post;
-import com.ontrustserver.repository.PostRepository;
-import com.ontrustserver.request.PagingRequest;
-import com.ontrustserver.request.PostRequest;
-import com.ontrustserver.response.PostEdit;
-import com.ontrustserver.response.PostResponse;
+import com.ontrustserver.domain.model.Post;
+import com.ontrustserver.domain.post.dao.PostRepository;
+import com.ontrustserver.global.common.request.PagingRequest;
+import com.ontrustserver.domain.post.dto.request.PostRequest;
+import com.ontrustserver.domain.post.dto.response.PostEdit;
+import com.ontrustserver.domain.post.dto.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

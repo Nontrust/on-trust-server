@@ -1,8 +1,8 @@
-package com.ontrustserver.repository;
+package com.ontrustserver.domain.post.dao;
 
-import com.ontrustserver.domain.post.Post;
-import com.ontrustserver.domain.post.QPost;
-import com.ontrustserver.request.PagingRequest;
+import com.ontrustserver.domain.model.Post;
+import com.ontrustserver.domain.model.QPost;
+import com.ontrustserver.global.common.request.PagingRequest;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

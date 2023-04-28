@@ -1,6 +1,6 @@
-package com.ontrustserver.domain.post;
+package com.ontrustserver.domain.model;
 
-import com.ontrustserver.request.PostRequest;
+import com.ontrustserver.domain.post.dto.request.PostRequest;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.ontrustserver.request;
+package com.ontrustserver.global.common.request;
 
 import jakarta.validation.constraints.Min;
 import lombok.Builder;
