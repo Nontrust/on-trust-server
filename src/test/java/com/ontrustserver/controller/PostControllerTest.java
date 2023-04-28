@@ -7,6 +7,7 @@ import com.ontrustserver.domain.post.Post;
 import com.ontrustserver.repository.PostRepository;
 import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
+import com.ontrustserver.response.PostEdit;
 import com.ontrustserver.response.PostResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -25,8 +26,7 @@ import java.util.stream.IntStream;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,10 +61,9 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("Post 테스트")
-    void test() throws Exception {
+    @DisplayName("Post Json데이터 테스트")
+    void postTest() throws Exception {
         //given
-
         PostRequest request = PostRequest.builder().title("test title").contents("test contents").build();
         String json = objectMapper.writeValueAsString(request);
 
@@ -83,6 +82,7 @@ class PostControllerTest {
     @Test
     @DisplayName("Post validate 테스트")
     void validateTest() throws Exception {
+        // given
         PostRequest request = PostRequest.builder().title("").contents("").build();
         String json = objectMapper.writeValueAsString(request);
 
@@ -100,9 +100,13 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("Post 저장 테스트")
+    @DisplayName("Post 1개 저장 테스트")
     void repositoryTest() throws Exception {
-        PostRequest request = PostRequest.builder().title("test title").contents("test contents").build();
+        // given
+        String title = "test title";
+        String contents = "test contents";
+
+        PostRequest request = PostRequest.builder().title(title).contents(contents).build();
         String json = objectMapper.writeValueAsString(request);
         long beforeCount = postRepository.count();
 
@@ -113,28 +117,29 @@ class PostControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.contents", is("test contents")))
-                .andExpect(jsonPath("$.title", is("test title")))
+                .andExpect(jsonPath("$.title", is(title)))
+                .andExpect(jsonPath("$.contents", is(contents)))
                 .andDo(print())
                 .andReturn();
         // then
         String responseJson = result.getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(responseJson);
-
+        // postRepository에 1행 추가
         assertEquals(postRepository.count()-beforeCount, 1);
-        Post post = postRepository.findAll().get(0);
-
-        assertEquals(jsonNode.get("title").asText("fallback"), "test title");
-        assertEquals(jsonNode.get("contents").asText("fallback"), "test contents");
+        // json 경로에 정상 추가 확인
+        assertEquals(jsonNode.get("title").asText("fallback"), title);
+        assertEquals(jsonNode.get("contents").asText("fallback"), contents);
     }
 
     @Test
     @DisplayName("글 1개 조회 test")
     void getByIdTest() throws Exception {
         //given
+        String title = "글 1";
+        String contents = "컨텐츠 1";
         Post post = Post.builder()
-                .title("글 1")
-                .contents("컨텐츠 1")
+                .title(title)
+                .contents(contents)
                 .build();
         postRepository.save(post);
 
@@ -144,28 +149,22 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title", is("글 1")))
-                .andExpect(jsonPath("$.contents", is("컨텐츠 1")))
+                .andExpect(jsonPath("$.title", is(title)))
+                .andExpect(jsonPath("$.contents", is(contents)))
                 .andDo(print());
     }
 
     @Test
     @DisplayName("글 1개 조회 test")
     void getListTest() throws Exception {
-        //given
-        List<Post> posts = IntStream.rangeClosed(1, 30)
-                .mapToObj(r ->
-                        Post.builder().title("글" + r).contents("컨텐츠" + r).build()
-                ).toList();
-        postRepository.saveAll(posts);
-
+        // given
         PagingRequest request = PagingRequest.builder()
                 .page(1)
                 .size(10)
                 .order("asc")
                 .build();
 
-        //expect
+        // expect
         MvcResult mvcResult = mockMvc
                 .perform(get("/post", request)
                         .contentType(APPLICATION_JSON)
@@ -177,8 +176,33 @@ class PostControllerTest {
 
         // then
         String responseJson = mvcResult.getResponse().getContentAsString();
-        List<Post> postList = objectMapper.readValue(responseJson, new TypeReference<List<Post>>() {});
+        List<PostResponse> postList = objectMapper.readValue(responseJson, new TypeReference<List<PostResponse>>() {});
         assertEquals(postList.size(), 10);
+    }
+    @Test
+    @DisplayName("글 수정 테스트")
+    void updateTest() throws Exception {
+        // given
+        String title = "변경된 타이틀";
+        String contents = "변경된 컨텐츠";
+        Post post = postRepository.fetchAnyOne();
+        PostEdit request = PostEdit.builder()
+                .title(title)
+                .contents(contents)
+                .build();
+        String json = objectMapper.writeValueAsString(request);
+        // expect
+        MvcResult mvcResult = mockMvc
+                .perform(put("/post/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is(title)))
+                .andExpect(jsonPath("$.contents", is(contents)))
+                .andDo(print())
+                .andReturn();
+
     }
 
 }
