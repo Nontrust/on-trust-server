@@ -28,6 +28,15 @@ public class ExceptionController {
 
         return errorResponse;
     }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResponse illegalArgumentHandler(IllegalArgumentException e) {
+        ErrorResponse errorResponse = ErrorResponse.builder().code("400").message("잘못된 요청입니다.").build();
+        errorResponse.validation().put("parameter", e.getMessage());
+        return errorResponse;
+    }
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(TypeMismatchException.class)
