@@ -39,6 +39,14 @@ public class PostRepositoryImpl implements PostRepositoryCustom{
                 .fetchFirst();
     }
 
+    @Override
+    public List<Long> getPostIdList(int size) {
+        return jpaQueryFactory.select(QPost.post.id)
+                .from(QPost.post)
+                .limit(size)
+                .fetch();
+    }
+
     private static OrderSpecifier<Long> orderById(String order){
         QPost post = QPost.post;
         return order.equalsIgnoreCase("desc")

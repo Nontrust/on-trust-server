@@ -9,10 +9,7 @@ public record PostResponse(
         String contents
 ) {
     @Builder
-    public PostResponse(Long id, String title, String contents) {
-        this.id = id;
-        this.title = title;
-        this.contents = contents;
+    public PostResponse {
     }
 
     public static PostResponse postToResponse(Post post){

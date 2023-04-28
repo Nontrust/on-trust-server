@@ -1,6 +1,7 @@
 package com.ontrustserver.service;
 
 import com.ontrustserver.domain.post.Post;
+import com.ontrustserver.domain.post.PostEditor;
 import com.ontrustserver.repository.PostRepository;
 import com.ontrustserver.request.PagingRequest;
 import com.ontrustserver.request.PostRequest;
@@ -9,6 +10,8 @@ import com.ontrustserver.response.PostResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,8 +56,15 @@ public class PostService {
     public PostResponse updatePostById(Long id, PostEdit postEdit){
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
-        post.setTitle(postEdit.title());
-        post.setContents(postEdit.contents());
+
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+
+        PostEditor postEditor = editorBuilder.
+                title(postEdit.title())
+                .contents(postEdit.contents())
+                .build();
+
+        post.edit(postEditor);
 
         return PostResponse.postToResponse(post);
     }

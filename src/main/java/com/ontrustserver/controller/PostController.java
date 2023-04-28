@@ -32,7 +32,7 @@ public class PostController {
         return postService.getPostList(pagingRequest);
     }
     @PutMapping("/post/{postId}")
-    public PostResponse updatePost(@PathVariable(name = "postId") Long id, PostEdit postEdit) {
+    public PostResponse updatePost(@PathVariable(name = "postId") Long id, @RequestBody PostEdit postEdit) {
         return postService.updatePostById(id, postEdit);
     }
 }
