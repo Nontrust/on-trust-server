@@ -1,7 +1,6 @@
 package com.ontrustserver.domain.post.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ontrustserver.domain.post.service.PostService;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.post.dao.PostRepository;
 import com.ontrustserver.global.common.request.PagingRequest;
@@ -75,7 +74,7 @@ class PostServiceTest {
         Post requestPost = Post.builder().title("글 1").contents("컨텐츠 1").build();
         postRepository.save(requestPost);
         //when
-        PostResponse responsePost = postService.getById(requestPost.getId());
+        PostResponse responsePost = postService.getPostById(requestPost.getId());
 
         //then
         assertNotNull(responsePost);

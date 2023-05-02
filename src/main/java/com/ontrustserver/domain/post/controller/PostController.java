@@ -1,10 +1,10 @@
 package com.ontrustserver.domain.post.controller;
 
-import com.ontrustserver.global.common.request.PagingRequest;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
 import com.ontrustserver.domain.post.service.PostService;
+import com.ontrustserver.global.common.request.PagingRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class PostController {
     }
     @GetMapping("/post/{postId}")
     public PostResponse getPost(@PathVariable(name = "postId") Long id){
-        return postService.getById(id);
+        return postService.getPostById(id);
     }
 
     @GetMapping("/post")

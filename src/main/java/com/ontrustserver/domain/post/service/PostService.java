@@ -3,6 +3,7 @@ package com.ontrustserver.domain.post.service;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.model.PostEditor;
 import com.ontrustserver.domain.post.dao.PostRepository;
+import com.ontrustserver.domain.post.util.ResponseUtil;
 import com.ontrustserver.global.common.request.PagingRequest;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.domain.post.dto.response.PostEdit;
@@ -22,11 +23,12 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository  postRepository;
+    private final ResponseUtil response;
     public PostResponse post(PostRequest postRequest) {
         Post post = new Post(postRequest);
         postRepository.save(post);
 
-        return PostResponse.postToResponse(post);
+        return response.of(post);
     }
 
     public List<PostResponse> postList(List<PostRequest> postRequests) {
@@ -35,25 +37,25 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return postRepository.saveAll(postList).stream()
-                .map(PostResponse::postToResponse)
+                .map(ResponseUtil::of)
                 .collect(Collectors.toList());
     }
 
-    public PostResponse getById(Long id) {
+    public PostResponse getPostById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        return PostResponse.postToResponse(post);
+        return response.of(post);
     }
 
     public List<PostResponse> getPostList(PagingRequest pagingRequest) {
         return postRepository.getPostList(pagingRequest).stream()
-                .map(PostResponse::postToResponse)
+                .map(ResponseUtil::of)
                 .collect(Collectors.toList());
     }
 
     @Transactional(timeout = 3, rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
-    public PostResponse updatePostById(Long id, PostEdit postEdit){
+    public PostResponse updatePostById(Long id, PostEdit postEdit) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
