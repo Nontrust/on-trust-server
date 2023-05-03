@@ -23,12 +23,11 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository  postRepository;
-    private final ResponseUtil response;
     public PostResponse post(PostRequest postRequest) {
         Post post = new Post(postRequest);
         postRepository.save(post);
 
-        return response.of(post);
+        return ResponseUtil.of(post);
     }
 
     public List<PostResponse> postList(List<PostRequest> postRequests) {
@@ -45,7 +44,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-        return response.of(post);
+        return ResponseUtil.of(post);
     }
 
     public List<PostResponse> getPostList(PagingRequest pagingRequest) {
@@ -68,7 +67,7 @@ public class PostService {
 
         post.edit(postEditor);
 
-        return response.of(post);
+        return ResponseUtil.of(post);
     }
 
     @Transactional(timeout = 3, rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
@@ -77,6 +76,6 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
         postRepository.deleteById(id);
-        return response.of(post);
+        return ResponseUtil.of(post);
     }
 }
