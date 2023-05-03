@@ -11,6 +11,7 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Entity
+@ToString
 public class Post {
     // todo Generation Type SEQUENCE로 변경 예정
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,7 +45,6 @@ public class Post {
         this.contents = Optional
                 .ofNullable(postEditor.contents())
                 .orElse(this.contents);
-
         return this;
     }
 }

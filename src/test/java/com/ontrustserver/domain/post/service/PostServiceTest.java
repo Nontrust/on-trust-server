@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -33,7 +32,6 @@ class PostServiceTest {
     PostRepository postRepository;
     @Autowired
     ObjectMapper objectMapper;
-
 
     @BeforeEach
     void setPost(){
@@ -143,7 +141,8 @@ class PostServiceTest {
         assertEquals(editedPostTitle.title(), updateTitle);
         assertEquals(editedPostTitle.contents(), post.getContents());
 
-    }  @Test
+    }
+    @Test
     @DisplayName("컨텐츠만 Update")
     void updatePostContents() {
         // given
@@ -160,6 +159,22 @@ class PostServiceTest {
         // then
         assertEquals(editedPostContents.title(), post.getTitle());
         assertEquals(editedPostContents.contents(), updateContents);
+    }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    void deletePostTest() {
+        // given
+        Post post = postRepository.fetchAnyOne();
+        long beforeCount = postRepository.count();
+
+        // when
+        PostResponse deleteResponse = postService.deletePostById(post.getId());
+        long afterCount = postRepository.count();
+
+        // then
+        assertEquals(beforeCount-afterCount, 1);
+        assertFalse(postRepository.findById(post.getId()).isPresent());
 
     }
 

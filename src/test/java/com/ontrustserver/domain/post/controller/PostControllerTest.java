@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.post.dao.PostRepository;
-import com.ontrustserver.global.common.request.PagingRequest;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
+import com.ontrustserver.global.common.request.PagingRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,10 +21,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -202,6 +203,27 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.contents", is(contents)))
                 .andDo(print())
                 .andReturn();
+    }
+    @Test
+    @DisplayName("글 수정 테스트")
+    void deleteTest() throws Exception {
+        // given
+        Post post = postRepository.fetchAnyOne();
+        long beforeCount = postRepository.count();
+
+        // expect
+        mockMvc
+                .perform(delete("/post/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+
+        //then
+        Optional<Post> DeletedPost = postRepository.findById(post.getId());
+        assertFalse(DeletedPost.isPresent());
+        assertEquals(beforeCount-postRepository.count(), 1);
 
     }
 
