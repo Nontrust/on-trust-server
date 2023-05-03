@@ -3,10 +3,10 @@ package com.ontrustserver.domain.post.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.post.dao.PostRepository;
-import com.ontrustserver.global.common.request.PagingRequest;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
+import com.ontrustserver.global.common.request.PagingRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -178,4 +178,23 @@ class PostServiceTest {
 
     }
 
+    @Test
+    @DisplayName("존재하지 않는 글 조회 exception Test")
+    void illegalArgumentExceptionTest() {
+        //given
+        long wrongId = Long.MIN_VALUE;
+
+        // expect
+        IllegalArgumentException getPostException
+                = assertThrows(IllegalArgumentException.class, () -> postService.getPostById(wrongId));
+        IllegalArgumentException deletePostException
+                = assertThrows(IllegalArgumentException.class, () -> postService.deletePostById(wrongId));
+        IllegalArgumentException updatePostException
+                = assertThrows(IllegalArgumentException.class, () -> postService.updatePostById(wrongId, PostEdit.builder().build()));
+
+        // then
+        assertTrue(getPostException.getMessage().contains("존재하지 않는 글"));
+        assertTrue(deletePostException.getMessage().contains("존재하지 않는 글"));
+        assertTrue(updatePostException.getMessage().contains("존재하지 않는 글"));
+    }
 }

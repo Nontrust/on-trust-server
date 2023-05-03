@@ -25,7 +25,8 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -224,7 +225,44 @@ class PostControllerTest {
         Optional<Post> DeletedPost = postRepository.findById(post.getId());
         assertFalse(DeletedPost.isPresent());
         assertEquals(beforeCount-postRepository.count(), 1);
-
     }
 
+    @Test
+    @DisplayName("존재하지 않는 글 조회 exception Test")
+    void illegalArgumentExceptionTest() throws Exception {
+        //given
+        long wrongId = Long.MIN_VALUE;
+        PostEdit blankRequest = PostEdit.builder().build();
+        String blankJson = objectMapper.writeValueAsString(blankRequest);
+
+        String resultMessage = "잘못된 요청입니다.";
+        String resultValidation = "존재하지 않는 글입니다.";
+
+        mockMvc
+                .perform(get("/post/{postId}", wrongId)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message", is(resultMessage)))
+                .andExpect(jsonPath("$.validation.parameter", is(resultValidation)))
+                .andDo(print())
+                .andReturn();
+        mockMvc
+                .perform(delete("/post/{postId}", wrongId)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message", is(resultMessage)))
+                .andExpect(jsonPath("$.validation.parameter", is(resultValidation)))
+                .andDo(print())
+                .andReturn();
+        mockMvc
+                .perform(put("/post/{postId}", wrongId)
+                        .contentType(APPLICATION_JSON)
+                        .content(blankJson)
+                )
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message", is(resultMessage)))
+                .andExpect(jsonPath("$.validation.parameter", is(resultValidation)))
+                .andDo(print())
+                .andReturn();
+    }
 }
