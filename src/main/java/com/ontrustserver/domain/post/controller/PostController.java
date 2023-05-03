@@ -35,4 +35,9 @@ public class PostController {
     public PostResponse updatePost(@PathVariable(name = "postId") Long id, @RequestBody PostEdit postEdit) {
         return postService.updatePostById(id, postEdit);
     }
+    @DeleteMapping("/post/{postId}")
+    public PostResponse deletePostById(@PathVariable(name = "postId") Long id){
+        return postService.deletePostById(id);
+    }
+
 }

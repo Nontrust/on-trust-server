@@ -68,6 +68,15 @@ public class PostService {
 
         post.edit(postEditor);
 
-        return PostResponse.postToResponse(post);
+        return response.of(post);
+    }
+
+    @Transactional(timeout = 3, rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
+    public PostResponse deletePostById(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        postRepository.deleteById(id);
+        return response.of(post);
     }
 }
