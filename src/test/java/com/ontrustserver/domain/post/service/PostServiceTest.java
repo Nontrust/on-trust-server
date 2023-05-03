@@ -8,6 +8,7 @@ import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
 import com.ontrustserver.global.common.request.PagingRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ class PostServiceTest {
                 ).toList();
         postRepository.saveAll(posts);
     }
-//    @AfterEach
+    @AfterEach
     void deleteAll() {
         postRepository.deleteAll();
     }
