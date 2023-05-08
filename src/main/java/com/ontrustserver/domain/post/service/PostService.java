@@ -3,6 +3,7 @@ package com.ontrustserver.domain.post.service;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.model.PostEditor;
 import com.ontrustserver.domain.post.dao.PostRepository;
+import com.ontrustserver.domain.post.exception.PostNotFound;
 import com.ontrustserver.domain.post.util.ResponseUtil;
 import com.ontrustserver.global.common.request.PagingRequest;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
@@ -23,26 +24,16 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository  postRepository;
-    public PostResponse post(PostRequest postRequest) {
+    public PostResponse postSave(PostRequest postRequest) {
         Post post = new Post(postRequest);
         postRepository.save(post);
 
         return ResponseUtil.of(post);
     }
 
-    public List<PostResponse> postList(List<PostRequest> postRequests) {
-        List<Post> postList = postRequests.stream()
-                .map(Post::new)
-                .collect(Collectors.toList());
-
-        return postRepository.saveAll(postList).stream()
-                .map(ResponseUtil::of)
-                .collect(Collectors.toList());
-    }
-
     public PostResponse getPostById(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         return ResponseUtil.of(post);
     }
@@ -56,7 +47,7 @@ public class PostService {
     @Transactional(timeout = 3, rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
     public PostResponse updatePostById(Long id, PostEdit postEdit) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
 
@@ -73,7 +64,7 @@ public class PostService {
     @Transactional(timeout = 3, rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
     public PostResponse deletePostById(Long id) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+                .orElseThrow(PostNotFound::new);
 
         postRepository.deleteById(id);
         return ResponseUtil.of(post);

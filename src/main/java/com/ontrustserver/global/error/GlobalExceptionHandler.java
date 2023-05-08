@@ -1,6 +1,7 @@
 package com.ontrustserver.global.error;
 
 
+import com.ontrustserver.domain.post.exception.PostNotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
@@ -30,8 +31,8 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ErrorResponse illegalArgumentHandler(IllegalArgumentException e) {
+    @ExceptionHandler(PostNotFound.class)
+    public ErrorResponse postNotFoundHandler(PostNotFound e) {
         ErrorResponse errorResponse = ErrorResponse.builder().code("400").message("잘못된 요청입니다.").build();
         errorResponse.validation().put("parameter", e.getMessage());
         return errorResponse;

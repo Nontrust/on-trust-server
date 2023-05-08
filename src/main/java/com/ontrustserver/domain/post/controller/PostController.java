@@ -20,7 +20,7 @@ public class PostController {
 
     @PostMapping("/post")
     public PostResponse post(@RequestBody @Valid PostRequest postRequest){
-        return postService.post(postRequest);
+        return postService.postSave(postRequest);
     }
     @GetMapping("/post/{postId}")
     public PostResponse getPost(@PathVariable(name = "postId") Long id){
