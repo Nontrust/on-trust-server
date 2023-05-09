@@ -6,6 +6,7 @@ import com.ontrustserver.domain.post.dao.PostRepository;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
+import com.ontrustserver.domain.post.exception.PostNotFound;
 import com.ontrustserver.global.common.request.PagingRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -57,7 +58,7 @@ class PostServiceTest {
         PostRequest postRequest = PostRequest.builder().title("test title").contents("test contents").build();
         //when
         long beforeCount = postRepository.count();
-        PostResponse post = postService.post(postRequest);
+        PostResponse post = postService.postSave(postRequest);
         long afterCount = postRepository.count();
 
         //then
@@ -170,7 +171,7 @@ class PostServiceTest {
         long beforeCount = postRepository.count();
 
         // when
-        PostResponse deleteResponse = postService.deletePostById(post.getId());
+        postService.deletePostById(post.getId());
         long afterCount = postRepository.count();
 
         // then
@@ -181,17 +182,17 @@ class PostServiceTest {
 
     @Test
     @DisplayName("존재하지 않는 글 조회 exception Test")
-    void illegalArgumentExceptionTest() {
+    void postNotFoundTest() {
         //given
         long wrongId = Long.MIN_VALUE;
 
         // expect
-        IllegalArgumentException getPostException
-                = assertThrows(IllegalArgumentException.class, () -> postService.getPostById(wrongId));
-        IllegalArgumentException deletePostException
-                = assertThrows(IllegalArgumentException.class, () -> postService.deletePostById(wrongId));
-        IllegalArgumentException updatePostException
-                = assertThrows(IllegalArgumentException.class, () -> postService.updatePostById(wrongId, PostEdit.builder().build()));
+        PostNotFound getPostException
+                = assertThrows(PostNotFound.class, () -> postService.getPostById(wrongId));
+        PostNotFound deletePostException
+                = assertThrows(PostNotFound.class, () -> postService.deletePostById(wrongId));
+        PostNotFound updatePostException
+                = assertThrows(PostNotFound.class, () -> postService.updatePostById(wrongId, PostEdit.builder().build()));
 
         // then
         assertTrue(getPostException.getMessage().contains("존재하지 않는 글"));

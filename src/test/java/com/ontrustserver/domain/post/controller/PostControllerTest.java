@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -95,7 +96,7 @@ class PostControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code", is("400")))
+                .andExpect(jsonPath("$.code", is(400)))
                 .andExpect(jsonPath("$.message", is("잘못된 요청입니다.")))
                 .andExpect(jsonPath("$.validation.title", is("title은 필수입니다.")))
                 .andDo(print());
@@ -229,8 +230,8 @@ class PostControllerTest {
 
     @Test
     @DisplayName("존재하지 않는 글 조회 exception Test")
-    void illegalArgumentExceptionTest() throws Exception {
-        //given
+    void postNotFoundTest() throws Exception {
+        // given
         long wrongId = Long.MIN_VALUE;
         PostEdit blankRequest = PostEdit.builder().build();
         String blankJson = objectMapper.writeValueAsString(blankRequest);
@@ -238,10 +239,14 @@ class PostControllerTest {
         String resultMessage = "잘못된 요청입니다.";
         String resultValidation = "존재하지 않는 글입니다.";
 
+        int status = HttpStatus.NOT_FOUND.value();
+
+        // expect
         mockMvc
                 .perform(get("/post/{postId}", wrongId)
                         .contentType(APPLICATION_JSON))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is(status)))
                 .andExpect(jsonPath("$.message", is(resultMessage)))
                 .andExpect(jsonPath("$.validation.parameter", is(resultValidation)))
                 .andDo(print())
@@ -249,7 +254,8 @@ class PostControllerTest {
         mockMvc
                 .perform(delete("/post/{postId}", wrongId)
                         .contentType(APPLICATION_JSON))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is(status)))
                 .andExpect(jsonPath("$.message", is(resultMessage)))
                 .andExpect(jsonPath("$.validation.parameter", is(resultValidation)))
                 .andDo(print())
@@ -259,7 +265,8 @@ class PostControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(blankJson)
                 )
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code", is(status)))
                 .andExpect(jsonPath("$.message", is(resultMessage)))
                 .andExpect(jsonPath("$.validation.parameter", is(resultValidation)))
                 .andDo(print())
