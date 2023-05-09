@@ -20,7 +20,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse invalidHandler(MethodArgumentNotValidException e){
-        ErrorResponse errorResponse = ErrorResponse.builder().code("400").message("잘못된 요청입니다.").build();
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message("잘못된 요청입니다.")
+                .build();
 
         for(FieldError fe : e.getFieldErrors()){
             errorResponse.validation().put(fe.getField(), fe.getDefaultMessage());
@@ -30,10 +33,13 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(PostNotFound.class)
     public ErrorResponse postNotFoundHandler(PostNotFound e) {
-        ErrorResponse errorResponse = ErrorResponse.builder().code("400").message("잘못된 요청입니다.").build();
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.NOT_FOUND.value())
+                .message("잘못된 요청입니다.")
+                .build();
         errorResponse.validation().put("parameter", e.getMessage());
         return errorResponse;
     }
@@ -42,7 +48,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TypeMismatchException.class)
     public ErrorResponse typeMismatchExceptionHandler(TypeMismatchException e){
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code("400")
+                .code(HttpStatus.BAD_REQUEST.value())
                 .message("잘못된 요청입니다.")
                 .build();
 
