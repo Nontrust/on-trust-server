@@ -2,6 +2,7 @@ package com.ontrustserver.global.error;
 
 
 import com.ontrustserver.domain.post.exception.PostNotFound;
+import com.ontrustserver.global.aspect.badword.exception.ContainBadWordException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    private static final String MESSAGE_BAD_REQUEST = "잘못된 요청입니다.";
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -22,7 +24,7 @@ public class GlobalExceptionHandler {
     public ErrorResponse invalidHandler(MethodArgumentNotValidException e){
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message("잘못된 요청입니다.")
+                .message(MESSAGE_BAD_REQUEST)
                 .build();
 
         for(FieldError fe : e.getFieldErrors()){
@@ -33,12 +35,24 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    @ExceptionHandler(ContainBadWordException.class)
+    public ErrorResponse containBadWordExceptionHandler(ContainBadWordException e) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
+                .message(MESSAGE_BAD_REQUEST)
+                .build();
+        errorResponse.validation().put("parameter", e.getMessage());
+        return errorResponse;
+    }
+
+    @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(PostNotFound.class)
     public ErrorResponse postNotFoundHandler(PostNotFound e) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(HttpStatus.NOT_FOUND.value())
-                .message("잘못된 요청입니다.")
+                .message(MESSAGE_BAD_REQUEST)
                 .build();
         errorResponse.validation().put("parameter", e.getMessage());
         return errorResponse;
@@ -49,7 +63,7 @@ public class GlobalExceptionHandler {
     public ErrorResponse typeMismatchExceptionHandler(TypeMismatchException e){
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message("잘못된 요청입니다.")
+                .message(MESSAGE_BAD_REQUEST)
                 .build();
 
         String fieldName = e.getPropertyName();
@@ -58,6 +72,5 @@ public class GlobalExceptionHandler {
 
         errorResponse.validation().put(fieldName, message);
         return errorResponse;
-
     }
 }

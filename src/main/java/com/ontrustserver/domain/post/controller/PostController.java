@@ -4,6 +4,7 @@ import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
 import com.ontrustserver.domain.post.service.PostService;
+import com.ontrustserver.global.aspect.badword.domain.BadWord;
 import com.ontrustserver.global.common.request.PagingRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,10 +19,13 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
+
+    @BadWord
     @PostMapping("/post")
-    public PostResponse post(@RequestBody @Valid PostRequest postRequest){
+    public PostResponse post(@RequestBody @Valid PostRequest postRequest) {
         return postService.postSave(postRequest);
     }
+
     @GetMapping("/post/{postId}")
     public PostResponse getPost(@PathVariable(name = "postId") Long id){
         return postService.getPostById(id);
@@ -31,10 +35,12 @@ public class PostController {
     public List<PostResponse> getPostList(@Valid PagingRequest pagingRequest){
         return postService.getPostList(pagingRequest);
     }
+
     @PutMapping("/post/{postId}")
     public PostResponse updatePost(@PathVariable(name = "postId") Long id, @RequestBody PostEdit postEdit) {
         return postService.updatePostById(id, postEdit);
     }
+
     @DeleteMapping("/post/{postId}")
     public PostResponse deletePostById(@PathVariable(name = "postId") Long id){
         return postService.deletePostById(id);
