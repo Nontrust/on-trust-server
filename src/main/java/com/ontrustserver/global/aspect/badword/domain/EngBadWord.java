@@ -1,11 +1,14 @@
-package com.ontrustserver.global.filter.badword;
+package com.ontrustserver.global.aspect.badword.domain;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-@Slf4j
+@Component
 public class EngBadWord implements BadWordInterface {
 
     @Override
@@ -28,14 +31,14 @@ public class EngBadWord implements BadWordInterface {
 
     @Override
     public TreeSet<String> getBadWordMap() {
-        return Arrays.stream(BadWord.values())
+        return Arrays.stream(BadWordEnum.values())
                 .map(Enum::name)
                 .map(String::toLowerCase)
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
     // TODO: DB저장 예정
-    enum BadWord{
+    public enum BadWordEnum{
         ASSHOLE, BITCH, BLOODY, BOLLOCKS, COCK, CUNT, DAMN, DICK, FUCK, PUSSY, SHIT, SLUT
     }
 }

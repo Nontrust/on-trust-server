@@ -1,10 +1,13 @@
-package com.ontrustserver.global.filter.badword;
+package com.ontrustserver.global.aspect.badword.domain;
+
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+@Component
 public class KorBadWord implements BadWordInterface {
     @Override
     public Optional<String> containAbuseSentence(String text) {
@@ -24,13 +27,13 @@ public class KorBadWord implements BadWordInterface {
 
     @Override
     public TreeSet<String> getBadWordMap() {
-        return Arrays.stream(BadWord.values())
-                .map(BadWord::getSentence)
+        return Arrays.stream(BadWordEnum.values())
+                .map(BadWordEnum::getSentence)
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
     // TODO: DB저장 예정
-    enum BadWord {
+    public enum BadWordEnum {
         SON_OF_A_BITCH("개새끼"),
         GO_TO_HELL("꺼져"),
         CRAZY_BITCH("미친년"),
@@ -42,7 +45,7 @@ public class KorBadWord implements BadWordInterface {
 
         private final String sentence;
 
-        BadWord(String sentence) {
+        BadWordEnum(String sentence) {
             this.sentence = sentence;
         }
 

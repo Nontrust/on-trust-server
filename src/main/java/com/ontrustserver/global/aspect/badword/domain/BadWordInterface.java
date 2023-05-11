@@ -1,4 +1,4 @@
-package com.ontrustserver.global.filter.badword;
+package com.ontrustserver.global.aspect.badword.domain;
 
 import java.util.Optional;
 import java.util.TreeSet;
