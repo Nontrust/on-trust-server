@@ -1,39 +1,41 @@
 package com.ontrustserver.global.filter.badword;
 
-import org.springframework.util.AntPathMatcher;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public enum EngBadWord implements BadWordInterface {
-    // TODO: DB저장 예정
-    ASSHOLE, BITCH, BLOODY, BOLLOCKS, COCK, CUNT, DAMN, DICK, FUCK, PUSSY, SHIT, SLUT;
-
-    private final AntPathMatcher matcher = new AntPathMatcher();
+@Slf4j
+public class EngBadWord implements BadWordInterface {
 
     @Override
-    public String containAbuseSentence(String text) {
-        return setAbuseSentenceMap().stream()
-                .filter((sentence)->matcher.match(sentence, text))
-                .findFirst()
-                .orElse(null);
+    public Optional<String> containAbuseSentence(String text) {
+        String textUpperCase = text.toLowerCase(Locale.ROOT);
+        return getBadWordMap().stream()
+                .filter(textUpperCase::contains)
+                .findFirst();
     }
 
     @Override
-    public String containAbuseSentenceParallel(String blob) {
-        // TODO: 현재 AntPathMatcher 사용, O(n+m) 알고리즘 직접 구현 해보고싶음
-        return setAbuseSentenceMap().parallelStream()
-                .filter(word -> matcher.match(word, blob))
-                .findFirst()
-                .orElse(null);
+    public Optional<String> containAbuseSentenceParallel(String blob) {
+        String lowerCase = blob.toLowerCase(Locale.ROOT);
+        //Todo: 병렬 스트리밍 문제 시 HashTable 사용 예정
+        return getBadWordMap()
+                .parallelStream()
+                .filter(lowerCase::contains)
+                .findFirst();
     }
 
     @Override
-    public HashSet<String> setAbuseSentenceMap() {
-        return Arrays.stream(KorBadWord.values())
+    public TreeSet<String> getBadWordMap() {
+        return Arrays.stream(BadWord.values())
                 .map(Enum::name)
-                .map(String::toUpperCase)
-                .collect(Collectors.toCollection(HashSet::new));
+                .map(String::toLowerCase)
+                .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    // TODO: DB저장 예정
+    enum BadWord{
+        ASSHOLE, BITCH, BLOODY, BOLLOCKS, COCK, CUNT, DAMN, DICK, FUCK, PUSSY, SHIT, SLUT
     }
 }

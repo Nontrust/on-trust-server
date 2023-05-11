@@ -1,40 +1,53 @@
 package com.ontrustserver.global.filter.badword;
 
-import org.springframework.util.AntPathMatcher;
-
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
+import java.util.Optional;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public enum KorBadWord implements BadWordInterface {
+public class KorBadWord implements BadWordInterface {
+    @Override
+    public Optional<String> containAbuseSentence(String text) {
+        return getBadWordMap().stream()
+                .filter(text::contains)
+                .findFirst();
+    }
+
+    @Override
+    public Optional<String> containAbuseSentenceParallel(String blob) {
+        //Todo: 병렬 스트리밍 문제 시 HashTable 사용 예정
+        return getBadWordMap().parallelStream()
+                .filter(blob::contains)
+                .findFirst();
+    }
+
+
+    @Override
+    public TreeSet<String> getBadWordMap() {
+        return Arrays.stream(BadWord.values())
+                .map(BadWord::getSentence)
+                .collect(Collectors.toCollection(TreeSet::new));
+    }
+
     // TODO: DB저장 예정
-    개새끼, 꺼져, 미친년, 미친놈, 병신, 썅, 씨발, 좆;
+    enum BadWord {
+        SON_OF_A_BITCH("개새끼"),
+        GO_TO_HELL("꺼져"),
+        CRAZY_BITCH("미친년"),
+        CRAZY_MAN("미친놈"),
+        RETARD("병신"),
+        JERK("썅"),
+        FUCK("씨발"),
+        DICK("좆");
 
-    private final AntPathMatcher matcher = new AntPathMatcher();
-    @Override
-    public String containAbuseSentence(String text) {
-        String textUpperCase = text.toUpperCase(Locale.ROOT);
-        return setAbuseSentenceMap().stream()
-                .filter((sentence)->matcher.match(sentence, textUpperCase))
-                .findFirst()
-                .orElse(null);
-    }
+        private final String sentence;
 
-    @Override
-    public String containAbuseSentenceParallel(String blob) {
-        String textUpperCase = blob.toUpperCase(Locale.ROOT);
-        return setAbuseSentenceMap().parallelStream()
-                .filter(word -> matcher.match(word, textUpperCase))
-                .findFirst()
-                .orElse(null);
-    }
+        BadWord(String sentence) {
+            this.sentence = sentence;
+        }
 
-
-    @Override
-    public HashSet<String> setAbuseSentenceMap() {
-        return Arrays.stream(KorBadWord.values())
-                .map(Enum::name)
-                .collect(Collectors.toCollection(HashSet::new));
+        public String getSentence() {
+            return sentence;
+        }
     }
 }
