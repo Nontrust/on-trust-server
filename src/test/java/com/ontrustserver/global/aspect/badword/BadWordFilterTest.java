@@ -1,18 +1,49 @@
-package com.ontrustserver.global.filter.badword;
+package com.ontrustserver.global.aspect.badword;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ontrustserver.domain.post.dao.PostRepository;
+import com.ontrustserver.domain.post.dto.request.PostRequest;
+import com.ontrustserver.global.aspect.badword.constance.TestSentence;
+import com.ontrustserver.global.aspect.badword.domain.BadWordInterface;
+import com.ontrustserver.global.aspect.badword.domain.EngBadWord;
+import com.ontrustserver.global.aspect.badword.domain.KorBadWord;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.StopWatch;
 
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
+@AutoConfigureMockMvc
 @SpringBootTest
 public class BadWordFilterTest {
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @AfterEach
+    void cleanRepository() {
+        postRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("영어 필터링 메서드 테스트")
@@ -55,11 +86,11 @@ public class BadWordFilterTest {
 
         //then
         assertTrue(containAbuse.isPresent());
-        assertEquals(containAbuse.get(), KorBadWord.BadWord.JERK.getSentence());
+        assertEquals(containAbuse.get(), KorBadWord.BadWordEnum.JERK.getSentence());
         assertFalse(nonContainAbuse.isPresent());
 
         assertTrue(containAbuseParallel.isPresent());
-        assertEquals(containAbuseParallel.get(), KorBadWord.BadWord.JERK.getSentence());
+        assertEquals(containAbuseParallel.get(), KorBadWord.BadWordEnum.JERK.getSentence());
         assertFalse(nonContainAbuseParallel.isPresent());
     }
     @Test
@@ -72,12 +103,12 @@ public class BadWordFilterTest {
         String blob = TestSentence.HUN_MIN_JEONG_EUM.repeat(10000);
 
         String blobWithBadWord = TestSentence.HUN_MIN_JEONG_EUM.repeat(1000)
-                +KorBadWord.BadWord.FUCK.getSentence()
-                +KorBadWord.BadWord.RETARD.getSentence()
+                +KorBadWord.BadWordEnum.FUCK.getSentence()
+                +KorBadWord.BadWordEnum.RETARD.getSentence()
                 +TestSentence.HUN_MIN_JEONG_EUM.repeat(9000);
 
         String blobWithBadWordLast = TestSentence.HUN_MIN_JEONG_EUM.repeat(10000)
-                +KorBadWord.BadWord.FUCK.getSentence();
+                +KorBadWord.BadWordEnum.FUCK.getSentence();
 
         // when
         // 일반적인 큰 단어 검사 시
@@ -128,5 +159,35 @@ public class BadWordFilterTest {
         assertTrue(blobBadWordTime >= blobBadWordTimeParallel);
         assertTrue(blobTimeWorst >= blobTimeWorstParallel);
          */
+    }
+
+    @Test
+    void testBadWordInPostTitle() throws Exception {
+        String badTitle = TestSentence.HUN_MIN_JEONG_EUM_CONTAIN_BAD_SENTENCE;
+        String goodContents = TestSentence.HUN_MIN_JEONG_EUM;
+
+        PostRequest postRequest = PostRequest.builder().title(badTitle).contents(goodContents).build();
+        int status = HttpStatus.UNSUPPORTED_MEDIA_TYPE.value();
+
+        String json = objectMapper.writeValueAsString(postRequest);
+        long beforeCount = postRepository.count();
+
+        // expect
+        mockMvc
+                .perform(
+                        post("/post")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(jsonPath("$.code", is(status)))
+                .andExpect(jsonPath("$.message", containsString("잘못된")))
+                .andExpect(jsonPath("$.validation.parameter", containsString("부적절한 단어입니다")))
+                .andDo(print())
+                .andReturn();
+
+        // then
+        long afterCount = postRepository.count();
+        assertFalse(afterCount > beforeCount);
     }
 }

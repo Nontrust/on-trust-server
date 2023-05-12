@@ -1,4 +1,7 @@
-package com.ontrustserver.global.filter.badword;
+package com.ontrustserver.global.aspect.badword.constance;
+
+import com.ontrustserver.global.aspect.badword.domain.EngBadWord;
+import com.ontrustserver.global.aspect.badword.domain.KorBadWord;
 
 /**
  * TEST Constants CLASS
@@ -26,8 +29,6 @@ public final class TestSentence {
             우리나라 말이 중국과 달라서 한자와 서로 통하지 못한다.
             그러므로 어리석은 백성들이 말하고 싶은 바가 있어도 마침내 그 뜻을 펴지 못하는 이가 많다.
             내가 이것을 매우 딱하게 여기어 새로 스물여덟글자를 만들어 내노니 사람마다 쉽게 익히어 나날의 소용에 편리하도록 함에 있나니라.""";
-    public static final String LOREM_IPSUM_CONTAIN_DAMN = LOREM_IPSUM+ EngBadWord.BadWord.DAMN.name();
-    public static final String HUN_MIN_JEONG_EUM_CONTAIN_BAD_SENTENCE = HUN_MIN_JEONG_EUM + KorBadWord.BadWord.JERK.getSentence();
-
-
+    public static final String LOREM_IPSUM_CONTAIN_DAMN = LOREM_IPSUM+ EngBadWord.BadWordEnum.DAMN.name();
+    public static final String HUN_MIN_JEONG_EUM_CONTAIN_BAD_SENTENCE = HUN_MIN_JEONG_EUM + KorBadWord.BadWordEnum.JERK.getSentence();
 }

@@ -34,8 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
 @Slf4j
+@AutoConfigureMockMvc
 @SpringBootTest
 class PostControllerTest {
 
@@ -179,7 +179,7 @@ class PostControllerTest {
 
         // then
         String responseJson = mvcResult.getResponse().getContentAsString();
-        List<PostResponse> postList = objectMapper.readValue(responseJson, new TypeReference<List<PostResponse>>() {});
+        List<PostResponse> postList = objectMapper.readValue(responseJson, new TypeReference<>() {});
         assertEquals(postList.size(), 10);
     }
     @Test
@@ -195,7 +195,7 @@ class PostControllerTest {
                 .build();
         String json = objectMapper.writeValueAsString(request);
         // expect
-        MvcResult mvcResult = mockMvc
+        mockMvc
                 .perform(put("/post/{postId}", post.getId())
                         .contentType(APPLICATION_JSON)
                         .content(json)
