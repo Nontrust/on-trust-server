@@ -12,8 +12,6 @@ import org.aspectj.lang.annotation.Aspect;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import static org.springframework.util.StringUtils.hasText;
-
 @Slf4j
 @Aspect
 public class BadWordCheckAspect {
@@ -36,33 +34,27 @@ public class BadWordCheckAspect {
      */
     @Around("@annotation(badWord)")
     public Object checkBadWordPointCut(ProceedingJoinPoint joinPoint, BadWord badWord) throws Throwable {
-        Object proceed = joinPoint.proceed();
+
         Object[] args = joinPoint.getArgs();
-        log.warn("args {}", args );
+
         for (Object arg : args) {
             if (arg instanceof Record) {
                 Field[] fields = arg.getClass().getDeclaredFields();
                 for (Field field :fields){
                     field.setAccessible(true);
-                    log.warn("declaredFields {}", field);
                     Object value = field.get(arg);
                     String name = field.getName();
                     if (value instanceof String) {
                         // String 타입의 필드인 경우 욕설 필터링을 적용합니다.
                         Optional<String> checkResult = kor.containAbuseSentence((String) value);
                         if(checkResult.isPresent()) {
-                            if(hasText(name)) {
-                                throw new ContainBadWordException(checkResult.get(), name);
-                            }
-                            else {
-                                throw new ContainBadWordException(checkResult.get());
-                            }
-
+                            throw new ContainBadWordException(checkResult.get(), name);
                         }
                     }
+                    field.setAccessible(false);
                 }
             }
         }
-        return proceed;
+        return joinPoint.proceed();
     }
 }

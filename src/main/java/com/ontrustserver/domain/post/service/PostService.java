@@ -26,6 +26,14 @@ public class PostService {
     private final PostRepository  postRepository;
     public PostResponse postSave(PostRequest postRequest) {
         Post post = new Post(postRequest);
+
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+        PostEditor postEditor = editorBuilder.
+                title(postRequest.title())
+                .contents(postRequest.contents())
+                .build();
+
+        post.edit(postEditor);
         postRepository.save(post);
 
         return ResponseUtil.of(post);

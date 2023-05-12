@@ -18,7 +18,6 @@ public class Post {
     @Id
     private Long id;
     private String title;
-    @Lob
     private String contents;
 
     @Builder
@@ -38,13 +37,12 @@ public class Post {
                 .contents(contents);
     }
 
-    public Post edit(PostEditor postEditor) {
+    public void edit(PostEditor postEditor) {
         this.title = Optional
                 .ofNullable(postEditor.title())
                 .orElse(this.title);
         this.contents = Optional
                 .ofNullable(postEditor.contents())
                 .orElse(this.contents);
-        return this;
     }
 }
