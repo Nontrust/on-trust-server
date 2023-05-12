@@ -1,6 +1,5 @@
 package com.ontrustserver.global.aspect.badword;
 
-import com.ontrustserver.global.aspect.badword.domain.BadWord;
 import com.ontrustserver.global.aspect.badword.domain.EngBadWord;
 import com.ontrustserver.global.aspect.badword.domain.KorBadWord;
 import com.ontrustserver.global.aspect.badword.exception.ContainBadWordException;

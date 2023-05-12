@@ -1,6 +1,6 @@
 # on-trust-server
 
-Toy SNS distribution made with Spring Boot 3 framework
+Toy SNS distribution made with Spring Boot 3 framework With @Latest version Library
 
 # Version Info
 
@@ -8,14 +8,12 @@ Toy SNS distribution made with Spring Boot 3 framework
 ![](https://img.shields.io/badge/java-17-red)
 ![](https://img.shields.io/badge/spring%20boot-3.0.5-brightgreen)
 ![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?style=flat)
-![JPA](https://img.shields.io/badge/JPA-Supported-4285F4?style=flat)
 
+![JPA](https://img.shields.io/badge/JPA-4285F4?style=flat)
+![AspectJ](https://img.shields.io/badge/AspectJ-4285F4?style=flat)
 
-
-
-### Server 
-![](https://img.shields.io/badge/AWS%20Shield-Standard-blue)
-
+### Server
+![](https://img.shields.io/badge/AWS-yellow)
 
 ## install
 [Download Open JDK 17](https://jdk.java.net/java-se-ri/17)
@@ -43,12 +41,14 @@ Query DSL Q Class path is created as a result of build Project
 ```SQL
 -- create scheme
 create schema on_trust;
+create schema on_trust_test;
 
 -- use schema
 use on_trust;
+use on_trust_test;
 ```
 
-### IDE setting 
+### IDE setting
 [use devTools with intellij](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360003378800-How-to-configure-IDEA-for-Spring-Boot-DevTools)
 
 ### defualt setting
@@ -62,4 +62,46 @@ use on_trust;
 ```bash
 # if you use docker id deed1515 and set @latest Tag
 docker build -t deed1515/on-trust-server:latest .
+``` 
+
+### Production Package Structure
+
+```textmate
+src
+├── main
+│   ├── java
+│   │   └── com
+│   │       └── ontrustserver
+│   │           └── guide
+│   │               ├── (C)OnTrustServerApplication : Conatain psvm
+│   │               ├── domain
+│   │               │   ├── post : Post Domain Package
+│   │               │   │   ├── controller : @RestController (C)
+│   │               │   │   ├── serice : @Service (C)
+│   │               │   │   ├── dao : extends JpaRepository with Query Dsl (I)(C) 
+│   │               │   │   ├── dto : response / request (R)
+│   │               │   │   ├── util : utils belonging to Domain (C)
+│   │               │   │   └── exception : Exception belonging to Domain (C)
+│   │               │   └── model : Entity / Entity Builder (C)(R)
+│   │               ├── global
+│   │               │   ├── aspect : Cross-cutting Aspect
+│   │               │   │   ├── badword : abuse text filter Domain
+│   │               │   │   │   ├── domain :Domain with Inner Enum (I)(C->e)
+│   │               │   │   │   ├── exception : BadWord Exception Domain (C)
+│   │               │   │   │   ├── (I)BadwordInterface : AOP Annotation @Badword
+│   │               │   │   │   ├── (C)BadWordCheckAspect : @Aspect
+│   │               │   │   │   └── exception : Exception belonging to Domain (C)
+│   │               │   │   ├── global : global Aspect
+│   │               │   │   │   ├── domain :Global Aspect Domain
+│   │               │   │   │   └── (C)RunningTimeAspect : Global @Aspect
+│   │               │   ├── common
+│   │               │   │   ├── request : Global Request (R)
+│   │               │   │   └── response : Global Response (R)
+│   │               │   ├── config
+│   │               │   │   ├── (C)AspectConfig : Contain Bean
+│   │               │   │   └── (C)QueryDslConfig : @PersistenceContext
+│   │               │   ├── error : @ControllerAdvice Class whit Global Error massage (C)(R) 
+│   │               │   └── util
+│   └── resources
+└──       └── application.yaml
 ``` 

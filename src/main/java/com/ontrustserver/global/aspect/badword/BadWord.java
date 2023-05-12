@@ -1,4 +1,4 @@
-package com.ontrustserver.global.aspect.badword.domain;
+package com.ontrustserver.global.aspect.badword;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
