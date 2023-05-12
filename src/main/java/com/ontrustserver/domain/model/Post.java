@@ -7,12 +7,12 @@ import lombok.*;
 import java.util.Optional;
 
 
+@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Entity
-@ToString
-public class Post {
+public class Post extends BaseEntity{
     // todo Generation Type SEQUENCE로 변경 예정
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
