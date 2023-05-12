@@ -5,9 +5,9 @@ import com.ontrustserver.global.aspect.badword.domain.EngBadWord;
 import com.ontrustserver.global.aspect.badword.domain.KorBadWord;
 import com.ontrustserver.global.aspect.badword.exception.ContainBadWordException;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
@@ -26,17 +26,14 @@ public class BadWordCheckAspect {
     /**
      * @param joinPoint: JoinPoint Object
      * @param badWord: target Annotation Interface
-     * @return proceed
      *
      * 어노테이션 : @BadWord
      * 메서드 파라미터의 Record에서 Filed Type이 String인 컨텐츠를 검사합니다.
      * 욕설이 포함되어있을 시 ContainBadWordException을 발생시킵니다.
      */
-    @Around("@annotation(badWord)")
-    public Object checkBadWordPointCut(ProceedingJoinPoint joinPoint, BadWord badWord) throws Throwable {
-
+    @Before("@annotation(badWord)")
+    public void checkBadWordPointCut(JoinPoint joinPoint, BadWord badWord) throws Throwable {
         Object[] args = joinPoint.getArgs();
-
         for (Object arg : args) {
             if (arg instanceof Record) {
                 Field[] fields = arg.getClass().getDeclaredFields();
@@ -55,6 +52,5 @@ public class BadWordCheckAspect {
                 }
             }
         }
-        return joinPoint.proceed();
     }
 }
