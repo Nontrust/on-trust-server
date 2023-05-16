@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository  postRepository;
+    @Transactional(timeout = 3, rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
     public PostResponse postSave(PostRequest postRequest) {
         Post post = new Post(postRequest);
 

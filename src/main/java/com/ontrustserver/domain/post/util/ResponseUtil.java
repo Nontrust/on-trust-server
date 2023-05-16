@@ -9,6 +9,8 @@ public class ResponseUtil {
                 .id(post.getId())
                 .title(post.getTitle())
                 .contents(post.getContents())
+                .createDate(post.getCreatedDate())
+                .updateDate(post.getUpdatedDate())
                 .build();
     }
 }
