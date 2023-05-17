@@ -1,11 +1,12 @@
 package com.ontrustserver.global.error;
 
 
-import com.ontrustserver.domain.post.exception.PostNotFound;
-import com.ontrustserver.global.aspect.badword.exception.ContainBadWordException;
+import com.ontrustserver.domain.post.exception.PostDomainException;
+import com.ontrustserver.global.exception.AspectGlobalException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -35,27 +36,31 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
-    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-    @ExceptionHandler(ContainBadWordException.class)
-    public ErrorResponse containBadWordExceptionHandler(ContainBadWordException e) {
+    @ExceptionHandler(AspectGlobalException.class)
+    public ResponseEntity<ErrorResponse> containBadWordExceptionHandler(AspectGlobalException e) {
+        HttpStatus httpStatus = e.statusCode();
+
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
+                .code(httpStatus.value())
                 .message(MESSAGE_BAD_REQUEST)
                 .build();
         errorResponse.validation().put("parameter", e.getMessage());
-        return errorResponse;
+
+        return ResponseEntity.status(httpStatus).body(errorResponse);
     }
 
     @ResponseBody
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(PostNotFound.class)
-    public ErrorResponse postNotFoundHandler(PostNotFound e) {
+    @ExceptionHandler(PostDomainException.class)
+    public ResponseEntity<ErrorResponse> postNotFoundHandler(PostDomainException e) {
+        HttpStatus httpStatus = e.statusCode();
+
         ErrorResponse errorResponse = ErrorResponse.builder()
-                .code(HttpStatus.NOT_FOUND.value())
+                .code(httpStatus.value())
                 .message(MESSAGE_BAD_REQUEST)
                 .build();
         errorResponse.validation().put("parameter", e.getMessage());
-        return errorResponse;
+
+        return ResponseEntity.status(httpStatus).body(errorResponse);
     }
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
