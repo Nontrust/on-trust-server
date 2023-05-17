@@ -1,6 +1,7 @@
 package com.ontrustserver.global.aspect.badword;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.post.dao.PostRepository;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.global.aspect.badword.constance.TestSentence;
@@ -9,6 +10,7 @@ import com.ontrustserver.global.aspect.badword.domain.EngBadWord;
 import com.ontrustserver.global.aspect.badword.domain.KorBadWord;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +43,15 @@ public class BadWordFilterTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @BeforeEach
+    void setPost(){
+        // given
+        Post post = Post.builder()
+                        .title("글")
+                        .contents("컨텐츠")
+                        .build();
+        postRepository.save(post);
+    }
     @AfterEach
     void cleanRepository() {
         postRepository.deleteAll();
@@ -176,6 +188,36 @@ public class BadWordFilterTest {
         mockMvc
                 .perform(
                         post("/post")
+                        .contentType(APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(jsonPath("$.code", is(status)))
+                .andExpect(jsonPath("$.message", containsString("잘못된")))
+                .andExpect(jsonPath("$.validation.parameter", containsString("부적절한 단어입니다")))
+                .andDo(print())
+                .andReturn();
+
+        // then
+        long afterCount = postRepository.count();
+        assertFalse(afterCount > beforeCount);
+    }
+
+    @Test
+    void testBadWordInPostUpdateTitle() throws Exception {
+        String badTitle = TestSentence.HUN_MIN_JEONG_EUM_CONTAIN_BAD_SENTENCE;
+
+        PostRequest postRequest = PostRequest.builder().title(badTitle).build();
+        int status = HttpStatus.UNSUPPORTED_MEDIA_TYPE.value();
+
+        String json = objectMapper.writeValueAsString(postRequest);
+        long beforeCount = postRepository.count();
+        long id = postRepository.fetchAnyOne().getId();
+
+        // expect
+        mockMvc
+                .perform(
+                        put("/post/{postId}", id)
                         .contentType(APPLICATION_JSON)
                         .content(json)
                 )
