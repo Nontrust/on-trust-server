@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -61,10 +63,22 @@ class PostServiceTest {
         PostResponse post = postService.postSave(postRequest);
         long afterCount = postRepository.count();
 
+        Instant expectedTime = Instant.now();
+        Instant lowerInstant = expectedTime.minus(1, ChronoUnit.SECONDS);
+        Instant upperInstant = expectedTime.plus(1, ChronoUnit.SECONDS);
+        Instant createDateInstance = post.createDate().toInstant();
+        Instant updateDateInstance = post.updateDate().toInstant();
+
         //then
         assertEquals(1, afterCount - beforeCount );
         assertEquals(post.title(), "test title");
         assertEquals(post.contents(), "test contents");
+
+        assertTrue(updateDateInstance.isAfter(lowerInstant));
+        assertTrue(updateDateInstance.isBefore(upperInstant));
+
+        assertTrue(createDateInstance.isAfter(lowerInstant));
+        assertTrue(createDateInstance.isBefore(upperInstant));
     }
 
     @Test
@@ -93,8 +107,8 @@ class PostServiceTest {
 
         List<PostResponse> responsePostOrderByAsc = postService.getPostList(asc);
         List<PostResponse> responsePostOrderByDesc = postService.getPostList(desc);
-        //then
 
+        //then
         assertEquals(responsePostOrderByAsc.size(), size);
         assertEquals(responsePostOrderByDesc.size(), size);
 
@@ -119,10 +133,36 @@ class PostServiceTest {
                 .contents(updateContents)
                 .build();
         // when
-        PostResponse editedPost = postService.updatePostById(post.getId(), postEdit);
+        PostResponse editedPostResponse = postService.updatePostById(post.getId(), postEdit);
+        Post editedPost = postRepository.findById(editedPostResponse.id())
+                .orElseThrow(RuntimeException::new);
+
+        Instant expectedTime = Instant.now();
+        Instant lowerUpdateInstant = expectedTime.minus(1, ChronoUnit.SECONDS);
+        Instant upperUpdateInstant = expectedTime.plus(1, ChronoUnit.SECONDS);
+
+        Instant beforeCreateTime = post.getCreatedDate().toInstant();
+        Instant lowerCreateInstant = beforeCreateTime.minus(1, ChronoUnit.SECONDS);
+        Instant upperCreateInstant = beforeCreateTime.plus(1, ChronoUnit.SECONDS);
+
+
+
+        Instant createDateInstance = editedPost.getCreatedDate().toInstant();
+        Instant updateDateInstance = editedPost.getUpdatedDate().toInstant();
+
         // then
-        assertEquals(editedPost.title(), updateTitle);
-        assertEquals(editedPost.contents(), updateContents);
+        assertEquals(editedPostResponse.title(), updateTitle);
+        assertEquals(editedPostResponse.contents(), updateContents);
+
+        assertEquals(editedPost.getTitle(), updateTitle);
+        assertEquals(editedPost.getContents(), updateContents);
+
+        //check create time
+        assertTrue(updateDateInstance.isAfter(lowerUpdateInstant));
+        assertTrue(updateDateInstance.isBefore(upperUpdateInstant));
+
+        assertTrue(createDateInstance.isAfter(lowerCreateInstant));
+        assertTrue(createDateInstance.isBefore(upperCreateInstant));
 
     }
     @Test

@@ -21,13 +21,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -70,8 +71,12 @@ class PostControllerTest {
         PostRequest request = PostRequest.builder().title("test title").contents("test contents").build();
         String json = objectMapper.writeValueAsString(request);
 
+        Instant expectedTime = Instant.now();
+        Instant lowerInstant = expectedTime.minus(1, ChronoUnit.SECONDS);
+        Instant upperInstant = expectedTime.plus(1, ChronoUnit.SECONDS);
+
         // expected
-        mockMvc
+        MvcResult mvcResult = mockMvc
                 .perform(post("/post", request)
                         .contentType(APPLICATION_JSON)
                         .content(json)
@@ -79,7 +84,21 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.contents", is("test contents")))
                 .andExpect(jsonPath("$.title", is("test title")))
-                .andDo(print());
+                .andDo(print())
+                .andReturn();
+
+        // then
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        PostResponse response = objectMapper.readValue(contentAsString, PostResponse.class);
+        Instant createDateInstance = response.createDate().toInstant();
+        Instant updateDateInstance = response.updateDate().toInstant();
+
+        assertTrue(createDateInstance.isAfter(lowerInstant));
+        assertTrue(createDateInstance.isBefore(upperInstant));
+
+        assertTrue(updateDateInstance.isAfter(lowerInstant));
+        assertTrue(updateDateInstance.isBefore(upperInstant));
     }
 
     @Test
@@ -146,15 +165,31 @@ class PostControllerTest {
                 .build();
         postRepository.save(post);
 
+        Instant expectedTime = Instant.now();
+        Instant lowerInstant = expectedTime.minus(1, ChronoUnit.SECONDS);
+        Instant upperInstant = expectedTime.plus(1, ChronoUnit.SECONDS);
+
         //expect
-        mockMvc
+        MvcResult mvcResult = mockMvc
                 .perform(get("/post/{postId}", post.getId())
                         .contentType(APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is(title)))
                 .andExpect(jsonPath("$.contents", is(contents)))
-                .andDo(print());
+                .andDo(print())
+                .andReturn();
+
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        PostResponse response = objectMapper.readValue(contentAsString, PostResponse.class);
+        Instant createDateInstance = response.createDate().toInstant();
+        Instant updateDateInstance = response.updateDate().toInstant();
+
+        assertTrue(createDateInstance.isAfter(lowerInstant));
+        assertTrue(createDateInstance.isBefore(upperInstant));
+
+        assertTrue(updateDateInstance.isAfter(lowerInstant));
+        assertTrue(updateDateInstance.isBefore(upperInstant));
     }
 
     @Test
@@ -194,8 +229,13 @@ class PostControllerTest {
                 .contents(contents)
                 .build();
         String json = objectMapper.writeValueAsString(request);
+
+        Instant expectedTime = Instant.now();
+        Instant lowerInstant = expectedTime.minus(1, ChronoUnit.SECONDS);
+        Instant upperInstant = expectedTime.plus(1, ChronoUnit.SECONDS);
+
         // expect
-        mockMvc
+        MvcResult mvcResult = mockMvc
                 .perform(put("/post/{postId}", post.getId())
                         .contentType(APPLICATION_JSON)
                         .content(json)
@@ -205,9 +245,17 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.contents", is(contents)))
                 .andDo(print())
                 .andReturn();
+
+        // then
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        PostResponse response = objectMapper.readValue(contentAsString, PostResponse.class);
+        Instant updateDateInstance = response.updateDate().toInstant();
+
+        assertTrue(updateDateInstance.isAfter(lowerInstant));
+        assertTrue(updateDateInstance.isBefore(upperInstant));
     }
     @Test
-    @DisplayName("글 수정 테스트")
+    @DisplayName("글 삭제 테스트")
     void deleteTest() throws Exception {
         // given
         Post post = postRepository.fetchAnyOne();
