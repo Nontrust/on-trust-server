@@ -91,8 +91,8 @@ class PostControllerTest {
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
         PostResponse response = objectMapper.readValue(contentAsString, PostResponse.class);
-        Instant createDateInstance = response.createDate().toInstant();
-        Instant updateDateInstance = response.updateDate().toInstant();
+        Instant createDateInstance = response.createdDate().toInstant();
+        Instant updateDateInstance = response.updatedDate().toInstant();
 
         assertTrue(createDateInstance.isAfter(lowerInstant));
         assertTrue(createDateInstance.isBefore(upperInstant));
@@ -182,8 +182,8 @@ class PostControllerTest {
 
         String contentAsString = mvcResult.getResponse().getContentAsString();
         PostResponse response = objectMapper.readValue(contentAsString, PostResponse.class);
-        Instant createDateInstance = response.createDate().toInstant();
-        Instant updateDateInstance = response.updateDate().toInstant();
+        Instant createDateInstance = response.createdDate().toInstant();
+        Instant updateDateInstance = response.updatedDate().toInstant();
 
         assertTrue(createDateInstance.isAfter(lowerInstant));
         assertTrue(createDateInstance.isBefore(upperInstant));
@@ -193,7 +193,7 @@ class PostControllerTest {
     }
 
     @Test
-    @DisplayName("글 1개 조회 test")
+    @DisplayName("글 리스트 조회 test")
     void getListTest() throws Exception {
         // given
         PagingRequest request = PagingRequest.builder()
@@ -249,7 +249,7 @@ class PostControllerTest {
         // then
         String contentAsString = mvcResult.getResponse().getContentAsString();
         PostResponse response = objectMapper.readValue(contentAsString, PostResponse.class);
-        Instant updateDateInstance = response.updateDate().toInstant();
+        Instant updateDateInstance = response.updatedDate().toInstant();
 
         assertTrue(updateDateInstance.isAfter(lowerInstant));
         assertTrue(updateDateInstance.isBefore(upperInstant));

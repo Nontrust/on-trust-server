@@ -66,8 +66,8 @@ class PostServiceTest {
         Instant expectedTime = Instant.now();
         Instant lowerInstant = expectedTime.minus(1, ChronoUnit.SECONDS);
         Instant upperInstant = expectedTime.plus(1, ChronoUnit.SECONDS);
-        Instant createDateInstance = post.createDate().toInstant();
-        Instant updateDateInstance = post.updateDate().toInstant();
+        Instant createDateInstance = post.createdDate().toInstant();
+        Instant updateDateInstance = post.updatedDate().toInstant();
 
         //then
         assertEquals(1, afterCount - beforeCount );

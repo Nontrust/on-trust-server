@@ -8,8 +8,8 @@ public record PostResponse(
         Long id,
         String title,
         String contents,
-        ZonedDateTime createDate,
-        ZonedDateTime updateDate
+        ZonedDateTime createdDate,
+        ZonedDateTime updatedDate
 ) {
     @Builder
     public PostResponse {
