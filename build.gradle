@@ -74,8 +74,10 @@ asciidoctor {
 bootJar {
     // Include generated API documentation in the application's static resource path
     dependsOn asciidoctor
-    from ("${asciidoctor.outputDir}/html5") {
-        into 'static/docs'
+    copy {
+        // copy output dir into static folder
+        from asciidoctor.outputDir
+        into 'src/main/resource/static/docs'
     }
 }
 

@@ -1,0 +1,11 @@
+= SNS Post API 응답 예시 문서
+:toc:
+
+== 글 단건 조회(/post/:postId)
+
+=== 요청
+include::{snippets}/index/curl-request.adoc[]
+include::{snippets}/index/http-request.adoc[]
+=== 응답
+include::{snippets}/index/http-response.adoc[]
+include::{snippets}/index/response-body.adoc[]

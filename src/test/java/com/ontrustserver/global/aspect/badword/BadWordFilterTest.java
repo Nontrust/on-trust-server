@@ -160,11 +160,6 @@ public class BadWordFilterTest {
         kor.containAbuseSentenceParallel(blobWithBadWordLast);
         stopWatch.stop();
         long blobTimeWorstParallel = stopWatch.getLastTaskTimeNanos();
-
-        log.warn("blobTime 길이 {} / 시간 (일반-병렬={})", blob.length(), blobTime - blobTimeParallel);
-        log.warn("blobBadWordTime 길이 {} / 검사 시간 (일반-병렬={})", blobWithBadWord.length(), blobBadWordTime - blobBadWordTimeParallel);
-        log.warn("blobTimeWorst 길이 {} / 검사 시간 (일반-병렬={})", blobWithBadWordLast.length(), blobTimeWorst - blobTimeWorstParallel);
-
         // then
         /*
         assertTrue(blobTime >= blobTimeParallel);
