@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Slf4j
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class ControllerAdviceHandler {
     private static final String MESSAGE_BAD_REQUEST = "잘못된 요청입니다.";
 
     @ResponseBody
