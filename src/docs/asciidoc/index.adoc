@@ -2,10 +2,37 @@
 :toc:
 
 == 글 단건 조회(/post/:postId)
+include::{snippets}/findPostById/path-parameters.adoc[]
 
 === 요청
-include::{snippets}/index/curl-request.adoc[]
-include::{snippets}/index/http-request.adoc[]
+include::{snippets}/findPostById/curl-request.adoc[]
+include::{snippets}/findPostById/http-request.adoc[]
+
 === 응답
-include::{snippets}/index/http-response.adoc[]
-include::{snippets}/index/response-body.adoc[]
+include::{snippets}/findPostById/response-fields.adoc[]
+include::{snippets}/findPostById/http-response.adoc[]
+include::{snippets}/findPostById/response-body.adoc[]
+
+
+== 글 작성(/post)
+===requestBody
+include::{snippets}/saveToPostRequest/request-body.adoc[]
+
+=== 요청
+include::{snippets}/saveToPostRequest/curl-request.adoc[]
+include::{snippets}/saveToPostRequest/http-request.adoc[]
+
+=== 응답
+include::{snippets}/saveToPostRequest/http-response.adoc[]
+include::{snippets}/saveToPostRequest/response-body.adoc[]
+
+== 글 리스크 조회(/post?page=&size=&order=)
+include::{snippets}/findPostListByPagingRequest/path-parameters.adoc[]
+
+=== 요청
+include::{snippets}/findPostListByPagingRequest/curl-request.adoc[]
+include::{snippets}/findPostListByPagingRequest/http-request.adoc[]
+
+=== 응답
+include::{snippets}/findPostListByPagingRequest/http-response.adoc[]
+include::{snippets}/findPostListByPagingRequest/response-body.adoc[]

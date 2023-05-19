@@ -77,15 +77,6 @@ bootJar {
     copy {
         // copy output dir into static folder
         from asciidoctor.outputDir
-        into 'src/main/resource/static/docs'
+        into 'src/main/resources/static/docs'
     }
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-// Run tests only if the 'test' property is not specified
-test.onlyIf {
-    !project.hasProperty('test')
 }
