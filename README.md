@@ -58,11 +58,7 @@ use on_trust_test;
   * schema : on_trust
   * hibernate : ddl-auto = update
 
-### build Dockerfile
-```bash
-# if you use docker id deed1515 and set @latest Tag
-docker build -t deed1515/on-trust-server:latest .
-``` 
+
 
 ### Production Package Structure
 
@@ -105,3 +101,36 @@ src
 │   └── resources
 └──       └── application.yaml
 ``` 
+
+### build Dockerfile
+To use Docker, you first need to install Docker.
+https://www.docker.com/get-started
+```bash
+# if you use docker id deed1515 and set @latest Tag
+docker build -t deed1515/on-trust-server:latest .
+``` 
+
+```dockerfile
+FROM gradle:7.6.0-jdk17-alpine AS builder
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY gradle gradle
+COPY gradlew .
+COPY settings.gradle .
+COPY build.gradle .
+COPY src src
+
+RUN apk update && apk add findutils
+RUN ./gradlew clean build --no-daemon
+
+FROM openjdk:17.0-jdk
+WORKDIR /app
+
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+EXPOSE 8000
+CMD ["java", "-jar", "app.jar"]
+
+```
