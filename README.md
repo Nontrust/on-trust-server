@@ -102,14 +102,21 @@ src
 └──       └── application.yaml
 ``` 
 
-### build Dockerfile
+### build project Dockerfile
 To use Docker, you first need to install Docker.
 https://www.docker.com/get-started
 ```bash
-# if you use docker id deed1515 and set @latest Tag
-docker build -t deed1515/on-trust-server:latest .
+# if you use docker id ${docker-user} and set @latest Tag
+# and it depend on mysql
+docker build -t ${docker-user}/on-trust-server:latest .
+docker run -d --name on-trust-server -p 8000:8000 ${docker-user}/on-trust-server:latest
+
+docker login
+docker push ${docker-user}/on-trust-db:latest
 ``` 
 
+
+#### spring boot Dockerfile
 ```dockerfile
 FROM gradle:7.6.0-jdk17-alpine AS builder
 
@@ -132,5 +139,27 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 
 EXPOSE 8000
 CMD ["java", "-jar", "app.jar"]
+```
 
+### docker pull mysql8 image
+```shell
+docker volume create on-trust-volume
+docker build -t ${docker-user}/on-trust-db:latest .
+
+docker run -d --name my-mysql-container -p 3306:3306 -v on-trust-volume:/var/lib/mysql ${docker-user}/on-trust-db:latest
+docker login
+docker push ${docker-user}/on-trust-db:latest
+```
+
+```dockerfile
+FROM mysql:8.0.30
+
+ENV MYSQL_USER=root
+ENV MYSQL_ROOT_PASSWORD=1234
+ENV MYSQL_PASSWORD=mypassword
+
+COPY sql/on_trust.sql /docker-entrypoint-initdb.d/
+COPY sql/on_trust_test.sql /docker-entrypoint-initdb.d/
+
+EXPOSE 3306
 ```
