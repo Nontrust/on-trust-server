@@ -8,6 +8,9 @@ build/
 # Querydsl generated files
 /src/main/generated/
 
+# asciidoc generated files
+/src/main/resources/static/docs
+
 ### STS ###
 .apt_generated
 .classpath
