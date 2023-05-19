@@ -3,6 +3,9 @@ package com.ontrustserver.global.common.request;
 import jakarta.validation.constraints.Min;
 import lombok.Builder;
 
+import static io.micrometer.common.util.StringUtils.isBlank;
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 
 public record PagingRequest(
         @Min(value = 1L, message = "page는 0보다 작을 수 없습니다") Integer page,
@@ -16,9 +19,9 @@ public record PagingRequest(
      */
     @Builder
     public PagingRequest(Integer page, Integer size, String order) {
-        this.page = page==null ? 1 : page;
-        this.size = size==null ? 10 : size;
-        this.order = order==null ? "asc" : order;
+        this.page = isEmpty(page) ? 1 : page;
+        this.size = isEmpty(size) ? 10 : size;
+        this.order = isBlank(order) ? "asc" : order;
     }
 
     public Integer offSet(){
