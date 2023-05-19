@@ -1,32 +1,42 @@
-#use open jdk 17(알파인 및 어댑터 찾아봐야됨)
+# Base image
+# Gradle setting
+# Todo: connect mysql (fail to start spring boot)
 
-FROM openjdk:17
+FROM gradle:7.6.0-jdk17-alpine AS builder
 
-USER root
-
-# 앱 루트 디렉토리
+# Set the working directory inside the container
+RUN mkdir /app
 WORKDIR /app
 
-# Gradle 실행에 필요한 파일 복사
+# Copy Gradle Running Script
 COPY gradle gradle
 COPY gradlew .
 COPY settings.gradle .
 COPY build.gradle .
 
-# 권한 설정
-RUN chmod +x ./gradlew
-
-# 프로젝트 복사
+# Copy the source code
 COPY src src
 
-# Gradle 빌드
-RUN ./gradlew clean build
+# Install xargs
+RUN apk update && apk add findutils
 
-# Jar 파일 복사
-COPY build/libs/*.jar app.jar
+# If gradle /bin/sh^M: bad interpreter
+# vi -b /gradlew -> use command :%s/^M//g
 
-# Expose port
+# Build the project without daemon process
+RUN ./gradlew clean build --no-daemon
+
+# Final image
+FROM openjdk:17.0-jdk
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the built JAR from the builder stage
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+# Expose the port that the application will listen on
 EXPOSE 8000
 
-# 실행
+# Command to run the application
 CMD ["java", "-jar", "app.jar"]
