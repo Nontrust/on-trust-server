@@ -13,6 +13,7 @@ out
 
 # Ignore generated documentation
 /src/main/resources/static/docs/
+/mysql/
 
 *.log
 *.txt
