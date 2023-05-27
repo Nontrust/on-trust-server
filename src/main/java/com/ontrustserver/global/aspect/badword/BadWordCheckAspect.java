@@ -33,16 +33,16 @@ public class BadWordCheckAspect {
     @Before("@annotation(badWord)")
     public void checkBadWordPointCut(JoinPoint joinPoint, BadWord badWord) throws Throwable {
         Object[] args = joinPoint.getArgs();
-        for (Object arg : args) {
-            if (arg instanceof Record) {
-                Field[] fields = arg.getClass().getDeclaredFields();
+        for (var arg : args) {
+            if (arg instanceof Record record) {
+                Field[] fields = record.getClass().getDeclaredFields();
                 for (Field field :fields){
                     field.setAccessible(true);
-                    Object value = field.get(arg);
+                    var value = field.get(record);
                     String name = field.getName();
-                    if (value instanceof String) {
+                    if (value instanceof String fieldName) {
                         // String 타입의 필드인 경우 욕설 필터링을 적용합니다.
-                        Optional<String> checkResult = kor.containAbuseSentence((String) value);
+                        Optional<String> checkResult = kor.containAbuseSentence(fieldName);
                         if(checkResult.isPresent()) {
                             throw new ContainBadWordException(checkResult.get(), name);
                         }
