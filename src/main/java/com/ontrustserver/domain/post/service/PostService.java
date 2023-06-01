@@ -3,13 +3,13 @@ package com.ontrustserver.domain.post.service;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.model.PostEditor;
 import com.ontrustserver.domain.post.dao.PostRepository;
-import com.ontrustserver.domain.post.exception.PostNotFound;
-import com.ontrustserver.domain.post.util.ResponseUtil;
-import com.ontrustserver.global.common.request.PagingRequest;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
-import lombok.AllArgsConstructor;
+import com.ontrustserver.domain.post.exception.sub.PostNotFound;
+import com.ontrustserver.domain.post.util.ResponseUtil;
+import com.ontrustserver.global.common.dto.response.PagingRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class PostService {
 

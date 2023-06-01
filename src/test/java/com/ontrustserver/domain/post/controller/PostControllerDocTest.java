@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.post.dao.PostRepository;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
-import com.ontrustserver.global.common.request.PagingRequest;
+import com.ontrustserver.global.common.dto.response.PagingRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -5,16 +5,16 @@ import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
 import com.ontrustserver.domain.post.service.PostService;
 import com.ontrustserver.global.aspect.badword.BadWord;
-import com.ontrustserver.global.common.request.PagingRequest;
+import com.ontrustserver.global.common.dto.response.PagingRequest;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 public class PostController {
     private final PostService postService;

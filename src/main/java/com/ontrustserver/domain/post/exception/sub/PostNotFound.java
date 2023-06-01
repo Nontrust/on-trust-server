@@ -1,5 +1,6 @@
-package com.ontrustserver.domain.post.exception;
+package com.ontrustserver.domain.post.exception.sub;
 
+import com.ontrustserver.domain.post.exception.PostDomainException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 

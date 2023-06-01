@@ -2,7 +2,7 @@ package com.ontrustserver.domain.post.dao;
 
 
 import com.ontrustserver.domain.model.Post;
-import com.ontrustserver.global.common.request.PagingRequest;
+import com.ontrustserver.global.common.dto.response.PagingRequest;
 
 import java.util.List;
 

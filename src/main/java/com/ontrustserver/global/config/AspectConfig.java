@@ -4,12 +4,12 @@ import com.ontrustserver.global.aspect.badword.BadWordCheckAspect;
 import com.ontrustserver.global.aspect.badword.domain.EngBadWord;
 import com.ontrustserver.global.aspect.badword.domain.KorBadWord;
 import com.ontrustserver.global.aspect.global.RunningTimeAspect;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AspectConfig {
     private final KorBadWord kor;
     private final EngBadWord eng;
