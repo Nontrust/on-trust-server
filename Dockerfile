@@ -26,10 +26,9 @@ RUN apk update && apk add findutils
 # Build the project without daemon process
 RUN ./gradlew clean build --no-daemon
 
-# Final image
-# openjdk이미지에서 문제 발견 시 eclipse-temurin 사용 예정
+# Final image openjdk->eclipsetemurin
 # https://adoptium.net/temurin/releases/
-FROM openjdk:17.0-jdk
+FROM eclipse-temurin:17-jre-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
