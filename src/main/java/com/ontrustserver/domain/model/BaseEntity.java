@@ -1,14 +1,14 @@
 package com.ontrustserver.domain.model;
 
-import com.ontrustserver.global.config.TimeUtil;
+import com.ontrustserver.global.Util.TimeUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.ZonedDateTime;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @MappedSuperclass
 public class BaseEntity {
     /**

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @ToString
 @Getter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
 public class Post extends BaseEntity{
