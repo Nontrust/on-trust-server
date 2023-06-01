@@ -40,4 +40,5 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 EXPOSE 8000
 
 # Command to run the application
-CMD ["java", "-jar", "app.jar"]
+# set default gc
+CMD ["java", "-Xms512m", "-Xmx1024m", "-jar", "app.jar"]
