@@ -3,6 +3,7 @@ package com.ontrustserver.global.error;
 
 import com.ontrustserver.domain.post.exception.PostDomainException;
 import com.ontrustserver.global.exception.AspectGlobalException;
+import com.ontrustserver.global.exception.AuthorizedGlobalException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class ControllerAdviceHandler {
     private static final String MESSAGE_BAD_REQUEST = "잘못된 요청입니다.";
+    private static final String MESSAGE_UNAUTHORIZED = "인증되지 않은 사용자 입니다.";
 
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -57,6 +59,19 @@ public class ControllerAdviceHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .code(httpStatus.value())
                 .message(MESSAGE_BAD_REQUEST)
+                .build();
+        errorResponse.validation().put("parameter", e.getMessage());
+
+        return ResponseEntity.status(httpStatus).body(errorResponse);
+    }
+    @ResponseBody
+    @ExceptionHandler(AuthorizedGlobalException.class)
+    public ResponseEntity<ErrorResponse> postNotFoundHandler(AuthorizedGlobalException e) {
+        HttpStatus httpStatus = e.statusCode();
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(httpStatus.value())
+                .message(MESSAGE_UNAUTHORIZED)
                 .build();
         errorResponse.validation().put("parameter", e.getMessage());
 
