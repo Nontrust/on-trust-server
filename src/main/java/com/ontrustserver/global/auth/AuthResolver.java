@@ -1,6 +1,6 @@
 package com.ontrustserver.global.auth;
 
-import com.ontrustserver.global.auth.domain.UserSession;
+import com.ontrustserver.global.auth.domain.AuthSession;
 import com.ontrustserver.global.exception.sup.Unauthorized;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;
@@ -14,7 +14,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class AuthResolver implements HandlerMethodArgumentResolver{
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(UserSession.class);
+        return parameter.getParameterType().equals(AuthSession.class);
     }
 
     @Override
@@ -25,6 +25,6 @@ public class AuthResolver implements HandlerMethodArgumentResolver{
             throw new Unauthorized();
         }
 
-        return new UserSession(1L, "MockUser");
+        return new AuthSession(1L, "MockUser");
     }
 }
