@@ -1,6 +1,7 @@
 package com.ontrustserver.global.error;
 
 
+import com.ontrustserver.domain.account.exception.AccountDomainException;
 import com.ontrustserver.domain.post.exception.PostDomainException;
 import com.ontrustserver.global.exception.AspectGlobalException;
 import com.ontrustserver.global.exception.AuthorizedGlobalException;
@@ -39,7 +40,21 @@ public class ControllerAdviceHandler {
 
     @ResponseBody
     @ExceptionHandler(AspectGlobalException.class)
-    public ResponseEntity<ErrorResponse> containBadWordExceptionHandler(AspectGlobalException e) {
+    public ResponseEntity<ErrorResponse> AspectExceptionHandler(AspectGlobalException e) {
+        HttpStatus httpStatus = e.statusCode();
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(httpStatus.value())
+                .message(MESSAGE_BAD_REQUEST)
+                .build();
+        errorResponse.validation().put("parameter", e.getMessage());
+
+        return ResponseEntity.status(httpStatus).body(errorResponse);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(AccountDomainException.class)
+    public ResponseEntity<ErrorResponse> accountDomainHandler(AccountDomainException e) {
         HttpStatus httpStatus = e.statusCode();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -53,7 +68,7 @@ public class ControllerAdviceHandler {
 
     @ResponseBody
     @ExceptionHandler(PostDomainException.class)
-    public ResponseEntity<ErrorResponse> postNotFoundHandler(PostDomainException e) {
+    public ResponseEntity<ErrorResponse> postDomainHandler(PostDomainException e) {
         HttpStatus httpStatus = e.statusCode();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -64,9 +79,10 @@ public class ControllerAdviceHandler {
 
         return ResponseEntity.status(httpStatus).body(errorResponse);
     }
+
     @ResponseBody
     @ExceptionHandler(AuthorizedGlobalException.class)
-    public ResponseEntity<ErrorResponse> postNotFoundHandler(AuthorizedGlobalException e) {
+    public ResponseEntity<ErrorResponse> authGlobalHandler(AuthorizedGlobalException e) {
         HttpStatus httpStatus = e.statusCode();
 
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -77,6 +93,7 @@ public class ControllerAdviceHandler {
 
         return ResponseEntity.status(httpStatus).body(errorResponse);
     }
+
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(TypeMismatchException.class)
