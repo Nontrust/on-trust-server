@@ -1,6 +1,7 @@
-package com.ontrustserver.domain.auth.controller;
+package com.ontrustserver.domain.account.controller;
 
-import com.ontrustserver.domain.auth.dto.request.LoginRequest;
+import com.ontrustserver.domain.account.dto.request.LoginRequest;
+import com.ontrustserver.domain.account.service.AccountService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RequestMapping("/auth")
 @RestController
-public class AuthController {
+public class AccountController {
+    private final AccountService authService;
+
     @PostMapping("login")
     public void login(@RequestBody LoginRequest loginRequest){
-        log.info("{}",loginRequest);
+        authService.login(loginRequest);
     }
 }

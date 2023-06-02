@@ -1,4 +1,4 @@
-package com.ontrustserver.domain.auth.dto.request;
+package com.ontrustserver.domain.account.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
