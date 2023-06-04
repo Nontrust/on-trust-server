@@ -1,6 +1,6 @@
 package com.ontrustserver.domain.model;
 
-import com.ontrustserver.global.Util.TimeUtil;
+import com.ontrustserver.global.util.TimeUtil;
 import jakarta.persistence.*;
 import lombok.*;
 
