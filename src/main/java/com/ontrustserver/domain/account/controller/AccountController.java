@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
     private final AccountService authService;
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public void login(@RequestBody LoginRequest loginRequest){
-        authService.login(loginRequest);
+        authService.signin(loginRequest);
     }
 }
