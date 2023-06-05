@@ -2,24 +2,29 @@ server:
   port: 8000
 
 spring:
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+       ddl-auto: update
+    open-in-view: false
+    properties:
+       hibernate:
+         show_sql: true
+         format_sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
   datasource:
     url: jdbc:mysql://localhost:3306/on_trust?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
-    open-in-view: false
-    hibernate:
-       ddl-auto: create
-    properties:
-       hibernate:
-         show_sql: true
-         format_sql: true
-  data:
-    web:
-      pageable:
-        one-indexed-parameters: true
   devtools:
     # Auto Restart
     restart:
