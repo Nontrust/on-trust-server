@@ -13,4 +13,8 @@ public class ContainBadWordException extends AspectGlobalException {
         // 부적절한 단어가 포함되어있습니다. : 부적절한 문자
         super(String.format(MESSAGE_FORMAT_WITH_VALUE, word, param));
     }
+
+    public static void throwException(String result, String name) {
+        throw new ContainBadWordException(result, name);
+    }
 }

@@ -5,45 +5,46 @@ import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
 import com.ontrustserver.domain.post.service.PostService;
 import com.ontrustserver.global.aspect.badword.BadWord;
+import com.ontrustserver.global.auth.domain.AuthSession;
 import com.ontrustserver.global.common.dto.response.PagingRequest;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
+@RequestMapping("/post")
 @RestController
 public class PostController {
     private final PostService postService;
 
-
     @BadWord
-    @PostMapping("/post")
-    public PostResponse post(@RequestBody @Valid PostRequest postRequest) {
+    @PostMapping
+    public PostResponse post(@RequestBody @Valid PostRequest postRequest, AuthSession authSession) {
         return postService.postSave(postRequest);
     }
 
-    @GetMapping("/post/{postId}")
+    @GetMapping("/{postId}")
     public PostResponse getPost(@PathVariable(name = "postId") Long id){
         return postService.getPostById(id);
     }
 
-    @GetMapping("/post")
+    @GetMapping
     public List<PostResponse> getPostList(@Valid PagingRequest pagingRequest){
         return postService.getPostList(pagingRequest);
     }
 
     @BadWord
-    @PutMapping("/post/{postId}")
-    public PostResponse updatePost(@PathVariable(name = "postId") Long id, @RequestBody PostEdit postEdit) {
+    @PutMapping("/{postId}")
+    public PostResponse updatePost(@PathVariable(name = "postId") Long id, @RequestBody PostEdit postEdit, AuthSession authSession) {
         return postService.updatePostById(id, postEdit);
     }
 
-    @DeleteMapping("/post/{postId}")
-    public PostResponse deletePostById(@PathVariable(name = "postId") Long id){
+    @DeleteMapping("/{postId}")
+    public PostResponse deletePostById(@PathVariable(name = "postId") Long id, AuthSession authSession){
         return postService.deletePostById(id);
     }
 

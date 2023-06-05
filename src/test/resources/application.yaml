@@ -8,4 +8,4 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update

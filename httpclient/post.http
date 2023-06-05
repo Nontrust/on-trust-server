@@ -1,0 +1,19 @@
+### Test 요청
+
+POST http://localhost:8000/post
+Content-Type: application/json
+Authorization: hi
+
+{
+  "title": "test title","contents": "test contents"
+}
+
+### Test 요청
+
+POST http://localhost:8000/auth/login
+Content-Type: application/json
+Authorization: hi
+
+{
+  "email": "Nontrust", "password": "134"
+}

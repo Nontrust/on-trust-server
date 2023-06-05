@@ -1,4 +1,4 @@
-package com.ontrustserver.global.Util;
+package com.ontrustserver.global.util;
 
 import lombok.extern.slf4j.Slf4j;
 
