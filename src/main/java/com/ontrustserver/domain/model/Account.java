@@ -34,10 +34,12 @@ public class Account extends BaseEntity {
         this.password = password;
     }
 
-    public void addSession(){
-        sessions.add(Session.builder()
-                        .account(this)
-                        .build());
+    public Session addSession(){
+        Session session = Session.builder()
+                .account(this)
+                .build();
+        sessions.add(session);
+        return session;
     }
 
 }

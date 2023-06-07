@@ -3,7 +3,7 @@ package com.ontrustserver.domain.post.util;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
 
-public class ResponseUtil {
+public class PostResponseUtil {
     public static PostResponse of(Post post){
         return PostResponse.builder()
                 .id(post.getId())
