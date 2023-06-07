@@ -7,7 +7,7 @@ import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.domain.post.dto.response.PostEdit;
 import com.ontrustserver.domain.post.dto.response.PostResponse;
 import com.ontrustserver.domain.post.exception.sub.PostNotFound;
-import com.ontrustserver.domain.post.util.ResponseUtil;
+import com.ontrustserver.domain.post.util.PostResponseUtil;
 import com.ontrustserver.global.common.dto.response.PagingRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,19 +37,19 @@ public class PostService {
         post.edit(postEditor);
         postRepository.save(post);
 
-        return ResponseUtil.of(post);
+        return PostResponseUtil.of(post);
     }
 
     public PostResponse getPostById(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(PostNotFound::new);
 
-        return ResponseUtil.of(post);
+        return PostResponseUtil.of(post);
     }
 
     public List<PostResponse> getPostList(PagingRequest pagingRequest) {
         return postRepository.getPostList(pagingRequest).stream()
-                .map(ResponseUtil::of)
+                .map(PostResponseUtil::of)
                 .collect(Collectors.toList());
     }
 
@@ -67,7 +67,7 @@ public class PostService {
 
         post.edit(postEditor);
 
-        return ResponseUtil.of(post);
+        return PostResponseUtil.of(post);
     }
 
     @Transactional(timeout = 3, rollbackFor = RuntimeException.class, propagation = Propagation.REQUIRES_NEW)
@@ -76,6 +76,6 @@ public class PostService {
                 .orElseThrow(PostNotFound::new);
 
         postRepository.deleteById(id);
-        return ResponseUtil.of(post);
+        return PostResponseUtil.of(post);
     }
 }

@@ -1,6 +1,7 @@
 package com.ontrustserver.domain.account.controller;
 
 import com.ontrustserver.domain.account.dto.request.LoginRequest;
+import com.ontrustserver.domain.account.dto.response.SessionResponse;
 import com.ontrustserver.domain.account.service.AccountService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,7 @@ public class AccountController {
     private final AccountService authService;
 
     @PostMapping("/login")
-    public void login(@RequestBody LoginRequest loginRequest){
-        authService.signin(loginRequest);
+    public SessionResponse login(@RequestBody LoginRequest loginRequest){
+        return authService.signIn(loginRequest);
     }
 }
