@@ -78,6 +78,7 @@ class PostControllerTest {
         // expected
         MvcResult mvcResult = mockMvc
                 .perform(post("/post", request)
+                        .header("Authorization", "hi")
                         .contentType(APPLICATION_JSON)
                         .content(json)
                 )
@@ -111,6 +112,7 @@ class PostControllerTest {
         // expected
         mockMvc
                 .perform(post("/post", request)
+                        .header("Authorization", "hi")
                         .contentType(APPLICATION_JSON)
                         .content(json)
                 )
@@ -135,6 +137,7 @@ class PostControllerTest {
         // expected
         MvcResult result = mockMvc
                 .perform(post("/post", request)
+                        .header("Authorization", "hi")
                         .contentType(APPLICATION_JSON)
                         .content(json)
                 )
@@ -237,6 +240,7 @@ class PostControllerTest {
         // expect
         MvcResult mvcResult = mockMvc
                 .perform(put("/post/{postId}", post.getId())
+                        .header("Authorization", "hi")
                         .contentType(APPLICATION_JSON)
                         .content(json)
                 )
@@ -264,6 +268,7 @@ class PostControllerTest {
         // expect
         mockMvc
                 .perform(delete("/post/{postId}", post.getId())
+                        .header("Authorization", "hi")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -301,6 +306,7 @@ class PostControllerTest {
                 .andReturn();
         mockMvc
                 .perform(delete("/post/{postId}", wrongId)
+                        .header("Authorization", "hi")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code", is(status)))
@@ -310,6 +316,7 @@ class PostControllerTest {
                 .andReturn();
         mockMvc
                 .perform(put("/post/{postId}", wrongId)
+                        .header("Authorization", "hi")
                         .contentType(APPLICATION_JSON)
                         .content(blankJson)
                 )

@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -39,14 +40,17 @@ class AccountControllerTest {
     @Autowired
     private SessionRepository sessionRepository;
 
+    private final String MOCK_NAME = "테스트";
+    private final String MOCK_EMAIL = "deed1515@naver.com";
+    private final String MOCK_PASSWORD = "1234";
 
     @BeforeEach
     void setPost(){
         // given
         Account account = Account.builder()
-                .name("테스트")
-                .email("deed1515@naver.com")
-                .password("1234")
+                .name(MOCK_NAME)
+                .email(MOCK_EMAIL)
+                .password(MOCK_PASSWORD)
                 .build();
         accountRepository.save(account);
     }
@@ -61,8 +65,8 @@ class AccountControllerTest {
     @DisplayName("로그인 실패")
     void loginFailedTest() throws Exception {
         LoginRequest request = LoginRequest.builder()
-                .email("not")
-                .password("1234")
+                .email(MOCK_NAME)
+                .password("failure value")
                 .build();
         String json = objectMapper.writeValueAsString(request);
 
@@ -82,8 +86,8 @@ class AccountControllerTest {
     void sessionTest() throws Exception {
         //given
         LoginRequest request = LoginRequest.builder()
-                .email("deed1515@naver.com")
-                .password("1234")
+                .email(MOCK_EMAIL)
+                .password(MOCK_PASSWORD)
                 .build();
         String json = objectMapper.writeValueAsString(request);
 
@@ -98,10 +102,11 @@ class AccountControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken", notNullValue()))
                 .andDo(print())
                 .andReturn();
         //then
-        Account account = accountRepository.findByEmailAndPassword("deed1515@naver.com", "1234")
+        Account account = accountRepository.findByEmailAndPassword(MOCK_EMAIL, MOCK_PASSWORD)
                 .orElseThrow();
         assertNotNull(account.getSessions());
         assertEquals(1L, sessionRepository.count());
@@ -112,8 +117,8 @@ class AccountControllerTest {
     void loginTest() throws Exception {
         //given
         LoginRequest request = LoginRequest.builder()
-                .email("deed1515@naver.com")
-                .password("1234")
+                .email(MOCK_EMAIL)
+                .password(MOCK_PASSWORD)
                 .build();
         String json = objectMapper.writeValueAsString(request);
 
@@ -128,8 +133,15 @@ class AccountControllerTest {
                         .content(json)
                 )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken", notNullValue()))
                 .andDo(print())
                 .andReturn();
     }
 
+
+    @Test
+    @DisplayName("로그인 후 세션 정보 활용")
+    void getLoginSession(){
+
+    }
 }

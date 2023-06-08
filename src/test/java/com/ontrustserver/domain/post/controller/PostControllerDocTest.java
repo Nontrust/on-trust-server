@@ -60,7 +60,8 @@ public class PostControllerDocTest {
   void findPostById() throws Exception {
     Post post = postRepository.fetchAnyOne();
     this.mockMvc.perform(get("/post/{postId}", post.getId())
-            .accept(APPLICATION_JSON))
+                    .header("Authorization", "hi")
+                    .accept(APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
         .andDo(document("findPostById",
@@ -131,8 +132,9 @@ public class PostControllerDocTest {
     // expected
     mockMvc
         .perform(post("/post", request)
-            .contentType(APPLICATION_JSON)
-            .content(json)
+                .header("Authorization", "hi")
+                .contentType(APPLICATION_JSON)
+                .content(json)
         )
         .andDo(print())
         .andExpect(status().isOk())
