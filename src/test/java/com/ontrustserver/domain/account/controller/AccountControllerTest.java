@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -127,7 +126,7 @@ class AccountControllerTest {
         Instant upperInstant = expectedTime.plus(1, ChronoUnit.SECONDS);
 
         //expect
-        MvcResult mvcResult = mockMvc
+        mockMvc
                 .perform(post("/auth/login")
                         .contentType(APPLICATION_JSON)
                         .content(json)
