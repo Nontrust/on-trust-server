@@ -183,8 +183,9 @@ public class BadWordFilterTest {
         mockMvc
                 .perform(
                         post("/post")
-                        .contentType(APPLICATION_JSON)
-                        .content(json)
+                                .header("Authorization", "hi")
+                                .contentType(APPLICATION_JSON)
+                                .content(json)
                 )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(jsonPath("$.code", is(status)))
@@ -213,8 +214,9 @@ public class BadWordFilterTest {
         mockMvc
                 .perform(
                         put("/post/{postId}", id)
-                        .contentType(APPLICATION_JSON)
-                        .content(json)
+                                .header("Authorization", "hi")
+                                .contentType(APPLICATION_JSON)
+                                .content(json)
                 )
                 .andExpect(status().isUnsupportedMediaType())
                 .andExpect(jsonPath("$.code", is(status)))
