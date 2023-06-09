@@ -15,5 +15,5 @@ Content-Type: application/json
 Authorization: hi
 
 {
-  "email": "Nontrust", "password": "134"
+  "email": "Nontrust", "password": "1234"
 }
