@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 @Getter
 public enum Language {
-    KOREAN,
-    ENGLISH,
-    JAPANESE,
-    CHINESE
+    // Todo : 다국어 설정 시 Key로 언어명
+    //  Value로 Character.UnicodeBlock 중 단어에 해당하는 값 추가
+    KOREAN(Character.UnicodeBlock.HANGUL_SYLLABLES),
+    ENGLISH(Character.UnicodeBlock.BASIC_LATIN);
 
     private final Character.UnicodeBlock unicodeBlock;
 
