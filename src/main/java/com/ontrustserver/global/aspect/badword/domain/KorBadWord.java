@@ -1,5 +1,7 @@
 package com.ontrustserver.global.aspect.badword.domain;
 
+import com.ontrustserver.domain.badword.dao.BadWordRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -7,8 +9,10 @@ import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class KorBadWord implements BadWordInterface {
+    private final BadWordRepository badWordRepository;
     @Override
     public Optional<String> containAbuseSentence(String text) {
         return getBadWordMap().stream()
@@ -23,7 +27,6 @@ public class KorBadWord implements BadWordInterface {
                 .filter(blob::contains)
                 .findFirst();
     }
-
 
     @Override
     public TreeSet<String> getBadWordMap() {

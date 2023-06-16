@@ -1,6 +1,7 @@
 package com.ontrustserver.global.aspect.badword;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ontrustserver.domain.badword.dao.BadWordRepository;
 import com.ontrustserver.domain.model.Post;
 import com.ontrustserver.domain.post.dao.PostRepository;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
@@ -42,6 +43,8 @@ public class BadWordFilterTest {
     private PostRepository postRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private BadWordRepository badWordRepository;
 
     @BeforeEach
     void setPost(){
@@ -87,7 +90,7 @@ public class BadWordFilterTest {
         // given
         String badSentence = TestSentence.HUN_MIN_JEONG_EUM_CONTAIN_BAD_SENTENCE;
         String goodSentence = TestSentence.HUN_MIN_JEONG_EUM;
-        BadWordInterface kor = new KorBadWord();
+        BadWordInterface kor = new KorBadWord(badWordRepository);
 
         // when
         Optional<String> containAbuse = kor.containAbuseSentence(badSentence);
@@ -109,7 +112,7 @@ public class BadWordFilterTest {
     @DisplayName("병렬 처리 시간 검사 : 반드시 통과하지 않을 수도 있음")
     void checkKorParallelTime(){
         // given
-        KorBadWord kor = new KorBadWord();
+        KorBadWord kor = new KorBadWord(badWordRepository);
         StopWatch stopWatch = new StopWatch();
 
         String blob = TestSentence.HUN_MIN_JEONG_EUM.repeat(10000);
