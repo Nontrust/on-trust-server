@@ -2,7 +2,9 @@ package com.ontrustserver.global.aspect.badword;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ontrustserver.domain.badword.dao.BadWordRepository;
+import com.ontrustserver.domain.model.BadWord;
 import com.ontrustserver.domain.model.Post;
+import com.ontrustserver.domain.model.enumerate.Language;
 import com.ontrustserver.domain.post.dao.PostRepository;
 import com.ontrustserver.domain.post.dto.request.PostRequest;
 import com.ontrustserver.global.aspect.badword.constance.TestSentence;
@@ -23,6 +25,7 @@ import org.springframework.util.StopWatch;
 
 import java.util.Optional;
 
+import static com.ontrustserver.global.aspect.badword.constance.TestSentence.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +48,6 @@ public class BadWordFilterTest {
     private ObjectMapper objectMapper;
     @Autowired
     private BadWordRepository badWordRepository;
-
     @BeforeEach
     void setPost(){
         // given
@@ -54,6 +56,19 @@ public class BadWordFilterTest {
                         .contents("컨텐츠")
                         .build();
         postRepository.save(post);
+
+        BadWord badWord = BadWord.builder()
+                .sentence(KOR_TARGET_ONE_SENTENCE)
+                .language(Language.KOREAN)
+                .build();
+
+        BadWord badWordEng = BadWord.builder()
+                .sentence(ENG_TARGET_ONE_SENTENCE)
+                .language(Language.ENGLISH)
+                .build();
+
+        badWordRepository.save(badWord);
+        badWordRepository.save(badWordEng);
     }
     @AfterEach
     void cleanRepository() {
@@ -66,7 +81,7 @@ public class BadWordFilterTest {
         // given
         String badSentence = TestSentence.LOREM_IPSUM_CONTAIN_DAMN;
         String goodSentence = TestSentence.LOREM_IPSUM;
-        BadWordInterface eng = new EngBadWord();
+        BadWordInterface eng = new EngBadWord(badWordRepository);
 
         // when
         Optional<String> containAbuse = eng.containAbuseSentence(badSentence);
@@ -101,11 +116,11 @@ public class BadWordFilterTest {
 
         //then
         assertTrue(containAbuse.isPresent());
-        assertEquals(containAbuse.get(), KorBadWord.BadWordEnum.JERK.getSentence());
+        assertEquals(containAbuse.get(), KOR_TARGET_ONE_SENTENCE);
         assertFalse(nonContainAbuse.isPresent());
 
         assertTrue(containAbuseParallel.isPresent());
-        assertEquals(containAbuseParallel.get(), KorBadWord.BadWordEnum.JERK.getSentence());
+        assertEquals(containAbuseParallel.get(), KOR_TARGET_ONE_SENTENCE);
         assertFalse(nonContainAbuseParallel.isPresent());
     }
     @Test
@@ -118,12 +133,12 @@ public class BadWordFilterTest {
         String blob = TestSentence.HUN_MIN_JEONG_EUM.repeat(10000);
 
         String blobWithBadWord = TestSentence.HUN_MIN_JEONG_EUM.repeat(1000)
-                +KorBadWord.BadWordEnum.FUCK.getSentence()
-                +KorBadWord.BadWordEnum.RETARD.getSentence()
+                +KOR_TARGET_ONE_SENTENCE
+                +KOR_TARGET_LONG_SENTENCE
                 +TestSentence.HUN_MIN_JEONG_EUM.repeat(9000);
 
         String blobWithBadWordLast = TestSentence.HUN_MIN_JEONG_EUM.repeat(10000)
-                +KorBadWord.BadWordEnum.FUCK.getSentence();
+                +KOR_TARGET_ONE_SENTENCE;
 
         // when
         // 일반적인 큰 단어 검사 시

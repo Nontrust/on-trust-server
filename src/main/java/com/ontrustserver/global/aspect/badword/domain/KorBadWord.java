@@ -4,10 +4,10 @@ import com.ontrustserver.domain.badword.dao.BadWordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
+
+import static com.ontrustserver.domain.model.enumerate.Language.KOREAN;
 
 @RequiredArgsConstructor
 @Component
@@ -30,30 +30,6 @@ public class KorBadWord implements BadWordInterface {
 
     @Override
     public TreeSet<String> getBadWordMap() {
-        return Arrays.stream(BadWordEnum.values())
-                .map(BadWordEnum::getSentence)
-                .collect(Collectors.toCollection(TreeSet::new));
-    }
-
-    // TODO: DB저장 예정
-    public enum BadWordEnum {
-        SON_OF_A_BITCH("개새끼"),
-        GO_TO_HELL("꺼져"),
-        CRAZY_BITCH("미친년"),
-        CRAZY_MAN("미친놈"),
-        RETARD("병신"),
-        JERK("썅"),
-        FUCK("씨발"),
-        DICK("좆");
-
-        private final String sentence;
-
-        BadWordEnum(String sentence) {
-            this.sentence = sentence;
-        }
-
-        public String getSentence() {
-            return sentence;
-        }
+        return new TreeSet<>(badWordRepository.getBadWordList(KOREAN));
     }
 }
