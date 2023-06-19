@@ -1,15 +1,19 @@
 package com.ontrustserver.global.aspect.badword.domain;
 
+import com.ontrustserver.domain.badword.dao.BadWordRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
+import static com.ontrustserver.domain.model.enumerate.Language.ENGLISH;
+
+@RequiredArgsConstructor
 @Component
 public class EngBadWord implements BadWordInterface {
+    private final BadWordRepository badWordRepository;
 
     @Override
     public Optional<String> containAbuseSentence(String text) {
@@ -31,14 +35,6 @@ public class EngBadWord implements BadWordInterface {
 
     @Override
     public TreeSet<String> getBadWordMap() {
-        return Arrays.stream(BadWordEnum.values())
-                .map(Enum::name)
-                .map(String::toLowerCase)
-                .collect(Collectors.toCollection(TreeSet::new));
-    }
-
-    // TODO: DB저장 예정
-    public enum BadWordEnum{
-        ASSHOLE, BITCH, BLOODY, BOLLOCKS, COCK, CUNT, DAMN, DICK, FUCK, PUSSY, SHIT, SLUT
+        return new TreeSet<>(badWordRepository.getBadWordList(ENGLISH));
     }
 }
